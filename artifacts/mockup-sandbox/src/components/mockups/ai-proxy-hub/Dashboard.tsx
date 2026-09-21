@@ -43,13 +43,16 @@ const css = `
   .landing .pill:hover { transform:translateY(-1px); box-shadow:0 8px 20px rgba(31,31,31,.1) }
   .landing .case-photo { transition:transform .5s cubic-bezier(.2,.75,.2,1) }
   .landing .case-card:hover .case-photo { transform:scale(1.045) }
-  @keyframes mediaStep { 0%, 13% { opacity:.48; transform:translateX(0) } 18%, 72% { opacity:1; transform:translateX(7px) } 83%, 100% { opacity:.48; transform:translateX(0) } }
-  @keyframes mediaPulse { 0%, 100% { transform:scale(.96); opacity:.65 } 42%, 68% { transform:scale(1); opacity:1 } }
-  .landing .media-step { animation:mediaStep 10s ease-in-out infinite }
-  .landing .media-step:nth-child(2) { animation-delay:2.4s }
-  .landing .media-step:nth-child(3) { animation-delay:4.8s }
-  .landing .media-step:nth-child(4) { animation-delay:7.2s }
-  .landing .media-pulse { animation:mediaPulse 10s ease-in-out infinite }
+  @keyframes mediaStep { 0%, 6% { opacity:.42; transform:translateX(0) } 10%, 23% { opacity:1; transform:translateX(8px) } 27%, 100% { opacity:.42; transform:translateX(0) } }
+  @keyframes mediaPulse { 0%, 6% { transform:scale(.92); opacity:.6 } 10%, 23% { transform:scale(1.08); opacity:1 } 27%, 100% { transform:scale(.92); opacity:.6 } }
+  .landing .media-step { animation:mediaStep 16s ease-in-out infinite }
+  .landing .media-step:nth-child(2) { animation-delay:4s }
+  .landing .media-step:nth-child(3) { animation-delay:8s }
+  .landing .media-step:nth-child(4) { animation-delay:12s }
+  .landing .media-pulse { animation:mediaPulse 16s ease-in-out infinite }
+  .landing .media-step:nth-child(2) .media-pulse { animation-delay:4s }
+  .landing .media-step:nth-child(3) .media-pulse { animation-delay:8s }
+  .landing .media-step:nth-child(4) .media-pulse { animation-delay:12s }
   .landing .mode-preview { animation:modeIn .42s cubic-bezier(.2,.75,.2,1) both }
   @keyframes modeIn { from { opacity:0; transform:translateY(9px) scale(.99) } to { opacity:1; transform:translateY(0) scale(1) } }
   .landing .mode-tab { transition:all .25s ease }
@@ -64,20 +67,52 @@ export function Dashboard() {
   const [language, setLanguage] = useState<"RU" | "EN">("RU");
   const [demoOpen, setDemoOpen] = useState(false);
   const [testKey, setTestKey] = useState<string | null>(null);
+  const [registrationOpen, setRegistrationOpen] = useState(false);
+  const [registrationEmail, setRegistrationEmail] = useState("");
   const [activeMode, setActiveMode] = useState<"coding" | "studio" | "chat">("coding");
   const [activePrice, setActivePrice] = useState(0);
+  const [activePriceCategory, setActivePriceCategory] = useState<"coding" | "chat" | "studio">("coding");
   const copy = () => {
     navigator.clipboard?.writeText("sk_live_••••••••8f2a");
     setCopied(true);
     setTimeout(() => setCopied(false), 1400);
   };
-  const generateTestKey = () => {
+  const issueTestKey = () => {
     setTestKey("sk_test_" + Math.random().toString(36).slice(2, 10) + "••••");
   };
+  const generateTestKey = () => {
+    setRegistrationEmail("");
+    setRegistrationOpen(true);
+  };
+  const completeRegistration = () => {
+    if (!registrationEmail.trim()) return;
+    issueTestKey();
+    setRegistrationOpen(false);
+  };
+  const registrationModal = registrationOpen ? (
+    <div className="fixed inset-0 z-50 grid place-items-center bg-black/30 p-5 backdrop-blur-sm">
+      <div role="dialog" aria-modal="true" aria-labelledby="registration-title" className="w-full max-w-[440px] rounded-[28px] bg-[#f7f7f5] p-7 shadow-2xl">
+        <div className="flex items-center justify-between">
+          <div>
+            <div className="mb-2 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[.12em] text-[#719984]"><KeyRound size={13}/> Бесплатный тест</div>
+            <h2 id="registration-title" className="display text-2xl font-bold">Создайте аккаунт.</h2>
+          </div>
+          <button aria-label="Закрыть регистрацию" onClick={() => setRegistrationOpen(false)}><X size={18}/></button>
+        </div>
+        <p className="mt-3 text-sm leading-relaxed text-[#6d6d6a]">Оставьте email — после регистрации мы сразу выдадим тестовый API-ключ на 10 000 токенов.</p>
+        <label className="mt-6 block text-[11px] font-semibold text-[#555]">Рабочий email
+          <input autoFocus type="email" value={registrationEmail} onChange={(event) => setRegistrationEmail(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") completeRegistration(); }} className="mt-2 w-full rounded-xl border border-[#d4d4d0] bg-white px-4 py-3 text-sm outline-none focus:border-[#7ea68f]" placeholder="you@company.com"/>
+        </label>
+        <button disabled={!registrationEmail.trim()} onClick={completeRegistration} className="mt-4 w-full rounded-full bg-[#292929] py-3 text-sm font-semibold text-white transition hover:bg-[#454545] disabled:cursor-not-allowed disabled:opacity-40">Получить тестовый ключ <ArrowRight className="ml-2 inline" size={14}/></button>
+        <div className="mt-4 text-center text-[10px] text-[#858580]">Без карты · ключ появится сразу после регистрации</div>
+      </div>
+    </div>
+  ) : null;
 
   return (
     <div className="landing min-h-screen overflow-x-hidden">
       <style>{css}</style>
+      {registrationModal}
       <div className="mx-auto max-w-[1320px] px-5 pb-24 sm:px-8 lg:px-12">
         <header className="appear sticky top-4 z-20 mt-4 flex items-center justify-between rounded-[28px] bg-[#e9e9e7]/95 px-5 py-3 backdrop-blur-md sm:px-6">
           <button className="display text-[19px] font-extrabold tracking-[-.06em]" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
@@ -211,16 +246,16 @@ export function Dashboard() {
                <div className="relative">
                  <div className="absolute left-[17px] top-7 bottom-7 w-px bg-[#d7e5dc] sm:left-[21px]"/>
                  <div className="relative space-y-3">
-                   {[
-                     { icon: ImageIcon, kicker: "Пример изображения, созданного AI", type: "AIIMAGE · 02", title: "Изображения", models: "GPT Image · Gemini · Flux", image: "ai-proxy-case-media.png" },
-                     { icon: Video, kicker: "VIDEO · 02", type: "Видео", title: "Видео", models: "Veo · Kling · Seedance" },
-                     { icon: AudioLines, kicker: "Аудио 02", type: "03:45", title: "Музыка и аудио", models: "Suno · ElevenLabs" },
-                     { icon: FileText, kicker: "report.pdf", type: "24.6 MB", title: "Понимание файлов", models: "PDF · DOCX · Audio · Video" },
-                   ].map(({ icon: Icon, kicker, type, title, models, image }) => (
+                    {[
+                      { step: "01", icon: ImageIcon, kicker: "Пример изображения, созданного AI", type: "AIIMAGE · 02", title: "Изображения", models: "GPT Image · Gemini · Flux", image: "ai-proxy-case-media.png" },
+                      { step: "02", icon: Video, kicker: "VIDEO · 02", type: "Видео", title: "Видео", models: "Veo · Kling · Seedance" },
+                      { step: "03", icon: AudioLines, kicker: "Аудио 02", type: "03:45", title: "Музыка и аудио", models: "Suno · ElevenLabs" },
+                      { step: "04", icon: FileText, kicker: "report.pdf", type: "24.6 MB", title: "Понимание файлов", models: "PDF · DOCX · Audio · Video" },
+                    ].map(({ step, icon: Icon, kicker, type, title, models, image }) => (
                      <div key={title} className="media-step group relative flex items-center gap-4 rounded-[24px] border border-[#dededb] bg-[#f1f1ee] p-3 transition hover:border-[#b7cbbd] hover:bg-[#edf4ef] sm:gap-5 sm:p-4">
                        <div className="media-pulse relative z-10 grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-[#dcebe1] text-[#5c866e] sm:h-11 sm:w-11"><Icon size={18} strokeWidth={1.7}/></div>
                        <div className="min-w-0 flex-1 py-1">
-                         <div className="flex flex-wrap items-center gap-2 text-[9px] font-semibold uppercase tracking-[.1em] text-[#719984]"><span>{kicker}</span><span className="text-[#aaa]">·</span><span className="text-[#90908b]">{type}</span></div>
+                          <div className="flex flex-wrap items-center gap-2 text-[9px] font-semibold uppercase tracking-[.1em] text-[#719984]"><span>Шаг {step}</span><span className="text-[#aaa]">·</span><span>{kicker}</span><span className="text-[#aaa]">·</span><span className="text-[#90908b]">{type}</span></div>
                          <div className="mt-1 text-[16px] font-bold tracking-[-.03em]">{title}</div>
                          <div className="mt-1 text-[11px] text-[#777773]">{models}</div>
                        </div>
@@ -274,19 +309,60 @@ export function Dashboard() {
             </section>
 
             <section id="актуальные-цены" className="border-b border-[#dededb] py-20 sm:py-28">
-              <div className="grid gap-10 lg:grid-cols-[.72fr_1.28fr] lg:items-end">
-                <div><div className="mb-4 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[.12em] text-[#719984]"><Zap size={14}/> Актуальные цены</div><h2 className="display max-w-[500px] text-[43px] font-extrabold leading-[.98] sm:text-[58px]">Больше возможностей<br/>за те же деньги.</h2><p className="mt-6 max-w-[390px] text-[14px] leading-relaxed text-[#6c6c6a]">Цены загружаются из того же каталога, по которому считается каждый запрос.</p><div className="mt-8 grid grid-cols-2 gap-3"><div className="rounded-2xl bg-[#e5eee8] p-4"><div className="text-[22px] font-bold tracking-[-.05em]">Единый баланс.</div><div className="mt-1 text-[11px] text-[#698072]">для всех моделей и режимов</div></div><div className="rounded-2xl bg-[#292929] p-4 text-white"><div className="text-[22px] font-bold tracking-[-.05em]">Никаких подписок.</div><div className="mt-1 text-[11px] text-[#aaa9a5]">платишь только за запросы</div></div></div></div>
-                <div className="overflow-hidden rounded-[26px] border border-[#dededb] bg-[#f1f1ee]"><div className="flex items-center justify-between border-b border-[#dededb] px-5 py-4"><div className="text-[12px] font-semibold">Фокус каталога</div><div className="flex gap-1.5">{[0,1,2].map((index) => <button key={index} aria-label={`Показать модель ${index + 1}`} onClick={() => setActivePrice(index)} className={`h-2 w-2 rounded-full ${activePrice === index ? "bg-[#5e816c]" : "bg-[#cbd4cd]"}`}/>)}</div></div><div className="grid gap-5 p-5 sm:grid-cols-[1fr_.68fr] sm:items-center"><div><div className="mb-2 text-[10px] uppercase tracking-[.1em] text-[#719984]">live model catalog · pay as you go</div><h3 className="text-[24px] font-bold tracking-[-.05em]">{[
-                  { name: "Claude Sonnet 4.6", provider: "Anthropic", input: "41 ₽", output: "207 ₽", note: "Сильный выбор для сложных агентов" },
-                  { name: "Gemini 3.5 Flash", provider: "Google", input: "21 ₽", output: "124 ₽", note: "Быстрые ответы и большой контекст" },
-                  { name: "DeepSeek V4 Pro", provider: "DeepSeek", input: "18 ₽", output: "55 ₽", note: "Рациональный маршрут для объёма" },
-                ][activePrice].name}</h3><p className="mt-2 text-[12px] text-[#777773]">{[
-                  { provider: "Anthropic", note: "Сильный выбор для сложных агентов" },
-                  { provider: "Google", note: "Быстрые ответы и большой контекст" },
-                  { provider: "DeepSeek", note: "Рациональный маршрут для объёма" },
-                ][activePrice].provider} · {[
-                  "Сильный выбор для сложных агентов", "Быстрые ответы и большой контекст", "Рациональный маршрут для объёма"
-                ][activePrice]}</p><div className="mt-5 flex gap-3"><div className="rounded-xl bg-[#e5eee8] px-3 py-2"><div className="text-[9px] text-[#789384]">ВХОД / 1M ТОКЕНОВ</div><div className="mt-1 text-[16px] font-bold text-[#4d6f5b]">{[{input:"41 ₽",output:"207 ₽"},{input:"21 ₽",output:"124 ₽"},{input:"18 ₽",output:"55 ₽"}][activePrice].input}</div></div><div className="rounded-xl bg-[#e5eee8] px-3 py-2"><div className="text-[9px] text-[#789384]">ВЫХОД / 1M ТОКЕНОВ</div><div className="mt-1 text-[16px] font-bold text-[#4d6f5b]">{[{input:"41 ₽",output:"207 ₽"},{input:"21 ₽",output:"124 ₽"},{input:"18 ₽",output:"55 ₽"}][activePrice].output}</div></div></div></div><div className="rounded-2xl bg-[#292929] p-5 text-white"><div className="font-mono text-[10px] text-[#9fc8b4]">request estimate</div><div className="mt-5 text-[34px] font-bold tracking-[-.07em]">0.08 ₽</div><div className="mt-1 text-[11px] text-[#aaa9a5]">примерный ответ · 1.2k токенов</div><div className="mt-6 h-1.5 overflow-hidden rounded-full bg-[#4b514d]"><div className="h-full w-[38%] rounded-full bg-[#9fc8b4]"/></div><div className="mt-2 flex justify-between text-[9px] text-[#8f9892]"><span>запрос</span><span>по факту</span></div></div></div><div className="border-t border-[#dededb] px-5 py-3 text-[10px] text-[#858580]"><Check size={13} className="mr-1 inline text-[#76a28f]"/> Цены в рублях, за 1 миллион токенов · обновлено сегодня</div></div>
+              <div className="flex flex-wrap items-end justify-between gap-8">
+                <div>
+                  <div className="mb-4 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[.12em] text-[#719984]"><Zap size={14}/> Актуальные цены</div>
+                  <h2 className="display max-w-[610px] text-[43px] font-extrabold leading-[.98] sm:text-[58px]">Больше возможностей<br/>за те же деньги.</h2>
+                  <p className="mt-6 max-w-[440px] text-[14px] leading-relaxed text-[#6c6c6a]">Цены загружаются из того же каталога, по которому считается каждый запрос.</p>
+                </div>
+                <div className="grid grid-cols-2 gap-3 sm:min-w-[390px]">
+                  <div className="rounded-2xl bg-[#e5eee8] p-4"><div className="text-[22px] font-bold tracking-[-.05em]">Единый баланс.</div><div className="mt-1 text-[11px] text-[#698072]">для всех моделей и режимов</div></div>
+                  <div className="rounded-2xl bg-[#292929] p-4 text-white"><div className="text-[22px] font-bold tracking-[-.05em]">Никаких подписок.</div><div className="mt-1 text-[11px] text-[#aaa9a5]">платишь только за запросы</div></div>
+                </div>
+              </div>
+              <div className="mt-12 flex flex-wrap items-center justify-between gap-4">
+                <div className="flex flex-wrap gap-2" role="tablist" aria-label="Категории актуальных моделей">
+                  {[
+                    { id: "coding" as const, label: "Кодинг", count: "3 модели" },
+                    { id: "chat" as const, label: "Чат", count: "3 модели" },
+                    { id: "studio" as const, label: "Studio", count: "3 модели" },
+                  ].map((category) => <button key={category.id} role="tab" aria-selected={activePriceCategory === category.id} onClick={() => { setActivePriceCategory(category.id); setActivePrice(0); }} className={`rounded-full px-4 py-2 text-[11px] font-semibold transition ${activePriceCategory === category.id ? "bg-[#292929] text-white" : "bg-[#ededeb] text-[#666] hover:bg-[#e2eee7] hover:text-[#42614f]"}`}>{category.label} <span className={activePriceCategory === category.id ? "text-[#a9cdb7]" : "text-[#9a9a95]"}>· {category.count}</span></button>)}
+                </div>
+                <div className="flex items-center gap-3 text-[11px] text-[#858580]"><span>листай модели</span><button aria-label="Предыдущая модель" onClick={() => setActivePrice((activePrice + 2) % 3)} className="grid h-8 w-8 place-items-center rounded-full border border-[#d5d5d1] hover:bg-[#e5eee8]">←</button><button aria-label="Следующая модель" onClick={() => setActivePrice((activePrice + 1) % 3)} className="grid h-8 w-8 place-items-center rounded-full border border-[#d5d5d1] hover:bg-[#e5eee8]">→</button></div>
+              </div>
+              <div className="mt-5 grid gap-4 md:grid-cols-3">
+                {[
+                  { category: "coding", name: "Claude Code", provider: "Anthropic", context: "1M", input: "41 ₽", output: "207 ₽", note: "агенты и сложные задачи", mark: "C" },
+                  { category: "coding", name: "GPT-5.5", provider: "OpenAI", context: "1.1M", input: "69 ₽", output: "413 ₽", note: "код и reasoning", mark: "G" },
+                  { category: "coding", name: "DeepSeek V4 Pro", provider: "DeepSeek", context: "1M", input: "18 ₽", output: "55 ₽", note: "быстрый маршрут для объёма", mark: "D" },
+                  { category: "chat", name: "Claude Sonnet 4.6", provider: "Anthropic", context: "1M", input: "41 ₽", output: "207 ₽", note: "сильный универсальный чат", mark: "C" },
+                  { category: "chat", name: "GPT-5.5", provider: "OpenAI", context: "1.1M", input: "69 ₽", output: "413 ₽", note: "точные ответы и файлы", mark: "G" },
+                  { category: "chat", name: "Gemini 3.5 Flash", provider: "Google", context: "1M", input: "21 ₽", output: "124 ₽", note: "быстрые ответы", mark: "G" },
+                  { category: "studio", name: "GPT Image", provider: "OpenAI", context: "—", input: "—", output: "от 2 ₽", note: "изображения и вариации", mark: "I" },
+                  { category: "studio", name: "Veo", provider: "Google", context: "—", input: "—", output: "от 38 ₽", note: "видео из текста", mark: "V" },
+                  { category: "studio", name: "ElevenLabs", provider: "ElevenLabs", context: "—", input: "—", output: "от 1 ₽", note: "озвучка и аудио", mark: "E" },
+                ].filter((model) => model.category === activePriceCategory).map((model, index) => (
+                  <button key={model.name} onClick={() => setActivePrice(index)} className={`group rounded-[24px] border p-5 text-left transition hover:-translate-y-1 hover:border-[#abc4b3] hover:bg-[#edf4ef] ${activePrice === index ? "border-[#9dbba9] bg-[#e5eee8]" : "border-[#dededb] bg-[#f1f1ee]"}`}>
+                    <div className="flex items-start justify-between"><span className="grid h-9 w-9 place-items-center rounded-xl bg-[#dcebe1] text-[11px] font-bold text-[#5d846d]">{model.mark}</span><span className="rounded-full bg-[#dcebe1] px-2 py-1 text-[9px] font-semibold text-[#5e816c]">pay as you go</span></div>
+                    <div className="mt-7 text-[17px] font-bold tracking-[-.04em]">{model.name}</div>
+                    <div className="mt-1 text-[11px] text-[#777773]">{model.provider} · {model.note}</div>
+                    <div className="mt-6 grid grid-cols-3 gap-2 border-t border-[#d8ded9] pt-4 text-[10px]"><div><div className="text-[#8b938e]">КОНТЕКСТ</div><div className="mt-1 font-semibold">{model.context}</div></div><div><div className="text-[#8b938e]">ВХОД / 1M</div><div className="mt-1 font-semibold text-[#4d6f5b]">{model.input}</div></div><div><div className="text-[#8b938e]">ВЫХОД / 1M</div><div className="mt-1 font-semibold text-[#4d6f5b]">{model.output}</div></div></div>
+                  </button>
+                ))}
+              </div>
+              <div className="mt-4 flex items-center justify-between text-[10px] text-[#858580]"><span><Check size={13} className="mr-1 inline text-[#76a28f]"/> Цены обновляются из живого каталога</span><span className="font-semibold text-[#4d6f5b]">{activePriceCategory === "coding" ? "Кодинг · 3 модели" : activePriceCategory === "chat" ? "Чат · 3 модели" : "Studio · 3 модели"}</span></div>
+              <div className="mt-16 border-t border-[#dededb] pt-12">
+                <div className="flex flex-wrap items-end justify-between gap-5"><div><div className="mb-3 text-[11px] font-semibold uppercase tracking-[.12em] text-[#719984]">Полный каталог</div><h3 className="display text-[35px] font-extrabold leading-none sm:text-[48px]">Все модели.<br/>В одном месте.</h3></div><a href="#модели" className="text-[12px] font-semibold text-[#4d6f5b] underline underline-offset-4">Открыть каталог · 186 моделей <ArrowRight className="ml-1 inline" size={12}/></a></div>
+                <div className="mt-7 overflow-hidden rounded-[24px] border border-[#dededb] bg-[#f1f1ee]">
+                  {[
+                    { provider: "Anthropic", model: "Claude Sonnet 4.6", type: "Текст", context: "1M", input: "41 ₽", output: "207 ₽", mark: "C" },
+                    { provider: "OpenAI", model: "GPT-5.5", type: "Текст", context: "1.1M", input: "69 ₽", output: "413 ₽", mark: "G" },
+                    { provider: "Google", model: "Gemini 3.5 Flash", type: "Текст", context: "1M", input: "21 ₽", output: "124 ₽", mark: "G" },
+                    { provider: "DeepSeek", model: "V4 Pro", type: "Текст", context: "1M", input: "18 ₽", output: "55 ₽", mark: "D" },
+                    { provider: "Mistral", model: "Pixtral Large", type: "Изображения", context: "128K", input: "37 ₽", output: "—", mark: "M" },
+                  ].map((model) => <div key={model.model} className="grid gap-3 border-b border-[#dededb] px-5 py-4 last:border-0 sm:grid-cols-[1.3fr_.55fr_.5fr_.45fr_.45fr] sm:items-center sm:gap-4 sm:px-6"><div className="flex items-center gap-3"><span className="grid h-8 w-8 place-items-center rounded-xl bg-[#e2eee7] text-[11px] font-bold text-[#5d846d]">{model.mark}</span><div><div className="text-[13px] font-bold">{model.model}</div><div className="text-[10px] text-[#858580]">{model.provider} · pay as you go</div></div></div><div className="text-[11px] text-[#777773]">{model.type}</div><div className="text-[11px] text-[#777773]">{model.context}</div><div className="text-[11px] font-semibold text-[#4d6f5b]">{model.input}</div><div className="text-[11px] font-semibold text-[#4d6f5b]">{model.output}</div></div>)}
+                  <div className="flex items-center justify-between border-t border-[#dededb] px-5 py-3 text-[10px] text-[#858580]"><span>Показано 5 из 186 моделей</span><a href="#модели" className="font-semibold text-[#4d6f5b]">Смотреть полный каталог →</a></div>
+                </div>
               </div>
             </section>
 
@@ -323,8 +399,8 @@ export function Dashboard() {
              </div>
            </section>
 
-          <section id="возможности" className="grid items-center gap-12 rounded-[32px] bg-[#292929] px-7 py-10 text-white sm:px-12 sm:py-14 lg:grid-cols-[1fr_1fr]">
-            <div><div className="mb-4 flex items-center gap-2 text-[11px] text-[#bdbdb8]"><CircleHelp size={14} className="text-[#9fc8b4]"/> API, который не мешает</div><h2 className="display max-w-[460px] text-[42px] font-extrabold leading-[.98] sm:text-[55px]">Меньше инфраструктуры. Больше продукта.</h2><p className="mt-6 max-w-[420px] text-[14px] leading-relaxed text-[#aaa9a5]">stratus/hub берёт на себя ключи, лимиты, фолбэки и наблюдаемость. Ты строишь продукт — мы держим шлюз.</p><button onClick={copy} className="mt-7 rounded-full bg-[#f3f3f0] px-4 py-3 text-[12px] font-semibold text-[#252525]">{copied ? <Check className="mr-2 inline text-[#6f9c84]" size={14}/> : <Copy className="mr-2 inline" size={14}/>} {copied ? "Скопировано" : "Скопировать API-ключ"}</button></div>
+           <section id="возможности" className="grid items-center gap-12 rounded-[32px] bg-[#292929] px-7 py-10 text-white sm:px-12 sm:py-14 lg:grid-cols-[1fr_1fr]">
+             <div><div className="mb-4 flex items-center gap-2 text-[11px] text-[#bdbdb8]"><CircleHelp size={14} className="text-[#9fc8b4]"/> API, который не мешает</div><h2 className="display max-w-[460px] text-[42px] font-extrabold leading-[.98] sm:text-[55px]">Меньше инфраструктуры. Больше продукта.</h2><p className="mt-6 max-w-[420px] text-[14px] leading-relaxed text-[#aaa9a5]">stratus/hub берёт на себя ключи, лимиты, фолбэки и наблюдаемость. Ты строишь продукт — мы держим шлюз.</p><button onClick={generateTestKey} className="mt-7 rounded-full bg-[#f3f3f0] px-4 py-3 text-[12px] font-semibold text-[#252525]">{testKey ? <Check className="mr-2 inline text-[#6f9c84]" size={14}/> : <KeyRound className="mr-2 inline" size={14}/>} {testKey ? "API-ключ создан" : "Создать API-ключ"}</button></div>
             <div className="rounded-[23px] bg-[#363635] p-5 font-mono text-[11px] leading-[2] text-[#b6b6b1] shadow-2xl"><div className="mb-4 flex items-center gap-2 text-[10px] text-[#83837e]"><span className="h-2 w-2 rounded-full bg-[#df7770]"/><span className="h-2 w-2 rounded-full bg-[#d6ae6f]"/><span className="h-2 w-2 rounded-full bg-[#81b99b]"/><span className="ml-auto">request.ts</span></div><div><span className="text-[#9dbda9]">const</span> response = <span className="text-[#d9be8d]">await</span> hub.chat.completions.create({"{"}</div><div className="pl-4">model: <span className="text-[#b8ce9b]">&quot;auto / balanced&quot;</span>,</div><div className="pl-4">messages: messages,</div><div className="pl-4">stream: <span className="text-[#b8ce9b]">true</span></div><div>{"}"}</div><div className="mt-4 text-[#83b59d]">✓ routed to claude-3-5-sonnet · 412ms</div></div>
           </section>
 
