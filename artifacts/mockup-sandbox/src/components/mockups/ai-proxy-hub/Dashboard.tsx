@@ -102,6 +102,41 @@ export function Dashboard() {
             </div>
           </section>
 
+          <section className="grid gap-4 border-b border-[#dededb] py-10 sm:grid-cols-3 sm:gap-0">
+            {[
+              { label: "Для продакшена", text: "Роутинг, фолбэки и лимиты без ручной сборки инфраструктуры." },
+              { label: "Для команд", text: "Единый доступ к моделям, понятные расходы и роли для каждого проекта." },
+              { label: "Для России", text: "152-ФЗ, ЭДО и безопасная работа с данными в одном контуре." },
+            ].map(({ label, text }, index) => (
+              <div key={label} className={`px-1 sm:px-7 ${index > 0 ? "border-[#dededb] sm:border-l" : ""}`}>
+                <div className="mb-3 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[.12em] text-[#719984]"><span className="h-2 w-2 rounded-full bg-[#83b39e]" />{label}</div>
+                <p className="max-w-[280px] text-[13px] leading-[1.55] text-[#727270]">{text}</p>
+              </div>
+            ))}
+          </section>
+
+          <section id="решения" className="py-20 sm:py-28">
+            <div className="flex flex-wrap items-end justify-between gap-6">
+              <div><div className="mb-4 flex items-center gap-2 text-[11px] font-medium text-[#767676]"><Layers3 size={14} className="text-[#7ea68f]" /> Решения для продукта</div><h2 className="display max-w-[570px] text-[43px] font-extrabold leading-[.98] sm:text-[58px]">Один шлюз для всей AI-логики.</h2></div>
+              <p className="max-w-[250px] text-[13px] leading-relaxed text-[#747472]">Выбери сценарий — мы уже подготовили нужный маршрут, модель и контроль расходов.</p>
+            </div>
+            <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {[
+                { title: "AI-поддержка", text: "Отвечай быстрее, подключая базу знаний и лучшие модели для каждого вопроса.", icon: CircleHelp },
+                { title: "AI-продажи", text: "Квалифицируй лиды и помогай менеджерам закрывать сделки прямо в чате.", icon: Zap },
+                { title: "AI-аналитика", text: "Собирай отчёты из данных компании и запускай сложные задачи по расписанию.", icon: Network },
+                { title: "AI-агенты", text: "Дай агенту инструменты, память и безопасный доступ к API продукта.", icon: Sparkles },
+              ].map(({ title, text, icon: Icon }) => (
+                <div key={title} className="group rounded-[24px] border border-[#dededb] p-6 transition hover:-translate-y-1 hover:border-[#b7cbbd] hover:bg-[#f0f5f1]">
+                  <div className="grid h-10 w-10 place-items-center rounded-xl bg-[#e5eee8] text-[#719984] transition group-hover:bg-[#d7e9dc]"><Icon size={18} /></div>
+                  <h3 className="mt-12 text-[16px] font-bold">{title}</h3>
+                  <p className="mt-2 text-[13px] leading-[1.55] text-[#6c6c6a]">{text}</p>
+                  <a href="#возможности" className="mt-5 inline-flex items-center text-[12px] font-semibold text-[#4d6f5b]">Подробнее <ArrowRight className="ml-1" size={13} /></a>
+                </div>
+              ))}
+            </div>
+          </section>
+
           <section id="продукт" className="grid gap-10 py-20 sm:py-28 lg:grid-cols-[.8fr_1.2fr]">
             <div><div className="mb-4 flex items-center gap-2 text-[11px] font-medium text-[#767676]"><Sparkles size={14} className="text-[#7ea68f]"/> Один слой для всего</div><h2 className="display max-w-[490px] text-[43px] font-extrabold leading-[.98] sm:text-[58px]">От идеи до работающего проекта.</h2></div>
             <div className="grid gap-4 sm:grid-cols-2">
@@ -114,7 +149,8 @@ export function Dashboard() {
             <div className="rounded-[23px] bg-[#363635] p-5 font-mono text-[11px] leading-[2] text-[#b6b6b1] shadow-2xl"><div className="mb-4 flex items-center gap-2 text-[10px] text-[#83837e]"><span className="h-2 w-2 rounded-full bg-[#df7770]"/><span className="h-2 w-2 rounded-full bg-[#d6ae6f]"/><span className="h-2 w-2 rounded-full bg-[#81b99b]"/><span className="ml-auto">request.ts</span></div><div><span className="text-[#9dbda9]">const</span> response = <span className="text-[#d9be8d]">await</span> hub.chat.completions.create({"{"}</div><div className="pl-4">model: <span className="text-[#b8ce9b]">&quot;auto / balanced&quot;</span>,</div><div className="pl-4">messages: messages,</div><div className="pl-4">stream: <span className="text-[#b8ce9b]">true</span></div><div>{"}"}</div><div className="mt-4 text-[#83b59d]">✓ routed to claude-3-5-sonnet · 412ms</div></div>
           </section>
 
-          <section id="тарифы" className="py-20 sm:py-28"><div className="flex flex-wrap items-end justify-between gap-6"><div><div className="mb-4 text-[11px] font-medium text-[#767676]">Простые тарифы</div><h2 className="display text-[44px] font-extrabold leading-none sm:text-[58px]">Плати за то,<br/>что используешь.</h2></div><div className="max-w-[245px] text-[13px] leading-relaxed text-[#747472]">Начни бесплатно. Перейди на Pro, когда продукт начнёт расти.</div></div><div className="mt-10 grid gap-4 sm:grid-cols-2"><div className="rounded-[24px] border border-[#dededb] p-7"><div className="text-[14px] font-semibold">Hobby</div><div className="mt-5 text-[39px] font-bold tracking-[-.06em]">$0 <span className="text-[13px] font-normal text-[#777]">/ месяц</span></div><p className="mt-3 text-[12px] text-[#777]">Для первых прототипов и экспериментов.</p><button onClick={() => setDemoOpen(true)} className="mt-7 w-full rounded-full border border-[#bbb] py-3 text-[12px] font-semibold hover:bg-[#ededeb]">Начать бесплатно</button></div><div className="rounded-[24px] bg-[#e2eee7] p-7"><div className="flex items-center justify-between text-[14px] font-semibold">Pro <span className="rounded-full bg-[#c4dfcf] px-2 py-1 text-[9px] text-[#466653]">ПОПУЛЯРНЫЙ</span></div><div className="mt-5 text-[39px] font-bold tracking-[-.06em]">$19 <span className="text-[13px] font-normal text-[#607b6a]">/ месяц</span></div><p className="mt-3 text-[12px] text-[#607b6a]">Для продуктов, которые уже в продакшене.</p><button onClick={() => setDemoOpen(true)} className="mt-7 w-full rounded-full bg-[#292929] py-3 text-[12px] font-semibold text-white hover:bg-[#454545]">Подключить Pro <ArrowRight className="ml-2 inline" size={13}/></button></div></div></section>
+           <section id="тарифы" className="py-20 sm:py-28"><div className="flex flex-wrap items-end justify-between gap-6"><div><div className="mb-4 text-[11px] font-medium text-[#767676]">Простые тарифы</div><h2 className="display text-[44px] font-extrabold leading-none sm:text-[58px]">Плати за то,<br/>что используешь.</h2></div><div className="max-w-[245px] text-[13px] leading-relaxed text-[#747472]">Начни бесплатно. Перейди на Pro, когда продукт начнёт расти.</div></div><div className="mt-10 grid gap-4 sm:grid-cols-2"><div className="rounded-[24px] border border-[#dededb] p-7"><div className="text-[14px] font-semibold">Hobby</div><div className="mt-5 text-[39px] font-bold tracking-[-.06em]">$0 <span className="text-[13px] font-normal text-[#777]">/ месяц</span></div><p className="mt-3 text-[12px] text-[#777]">Для первых прототипов и экспериментов.</p><button onClick={() => setDemoOpen(true)} className="mt-7 w-full rounded-full border border-[#bbb] py-3 text-[12px] font-semibold hover:bg-[#ededeb]">Начать бесплатно</button></div><div className="rounded-[24px] bg-[#e2eee7] p-7"><div className="flex items-center justify-between text-[14px] font-semibold">Pro <span className="rounded-full bg-[#c4dfcf] px-2 py-1 text-[9px] text-[#466653]">ПОПУЛЯРНЫЙ</span></div><div className="mt-5 text-[39px] font-bold tracking-[-.06em]">$19 <span className="text-[13px] font-normal text-[#607b6a]">/ месяц</span></div><p className="mt-3 text-[12px] text-[#607b6a]">Для продуктов, которые уже в продакшене.</p><button onClick={() => setDemoOpen(true)} className="mt-7 w-full rounded-full bg-[#292929] py-3 text-[12px] font-semibold text-white hover:bg-[#454545]">Подключить Pro <ArrowRight className="ml-2 inline" size={13}/></button></div></div></section>
+           <section className="rounded-[32px] bg-[#e5eee8] px-7 py-12 sm:px-12 sm:py-16"><div className="grid items-end gap-8 lg:grid-cols-[1fr_auto]"><div><div className="mb-4 text-[11px] font-semibold uppercase tracking-[.12em] text-[#5e816c]">История запуска</div><h2 className="display max-w-[650px] text-[42px] font-extrabold leading-[.98] sm:text-[56px]">«Переключили модель — и не переписали продукт».</h2><p className="mt-5 max-w-[520px] text-[14px] leading-relaxed text-[#617268]">Команда customer support запустила новый AI-маршрут за один день: сначала дешёвая модель для классификации, затем сильная — только для сложных диалогов.</p></div><div className="rounded-2xl bg-[#f7f7f5]/80 p-5 lg:min-w-[230px]"><div className="text-[10px] uppercase tracking-[.1em] text-[#789384]">Результат</div><div className="mt-3 text-[38px] font-bold tracking-[-.06em] text-[#2d4537]">−38%</div><div className="text-[12px] text-[#698072]">стоимость ответа</div><div className="mt-5 text-[38px] font-bold tracking-[-.06em] text-[#2d4537]">2.4×</div><div className="text-[12px] text-[#698072]">быстрее запуск</div></div></div></section>
         </main>
 
         <footer className="flex flex-wrap items-center justify-between gap-5 border-t border-[#dededb] pt-7 text-[11px] text-[#787876]"><span className="font-semibold text-[#373735]">stratus/hub</span><span>© 2024 Northstar Labs</span><div className="flex gap-5"><a href="#faq" className="hover:text-black">Документация</a><a href="#faq" className="hover:text-black">Статус</a><a href="#faq" className="hover:text-black">Контакты</a></div></footer>
