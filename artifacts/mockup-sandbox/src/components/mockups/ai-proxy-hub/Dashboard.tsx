@@ -31,9 +31,11 @@ const css = `
   .landing .draw { stroke-dasharray:460; stroke-dashoffset:460; animation:draw 1.8s .4s ease-out forwards }
   .landing .pill { transition:all .2s ease }
   .landing .pill:hover { transform:translateY(-1px); box-shadow:0 8px 20px rgba(31,31,31,.1) }
+  .landing .case-photo { transition:transform .5s cubic-bezier(.2,.75,.2,1) }
+  .landing .case-card:hover .case-photo { transform:scale(1.045) }
 `;
 
-const navItems = ["Продукт", "Возможности", "Тарифы", "FAQ"];
+const navItems = ["Продукт", "Кейсы", "Возможности", "Тарифы", "FAQ"];
 
 export function Dashboard() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -143,6 +145,39 @@ export function Dashboard() {
               {[{icon:Network,title:"Один API",text:"Одинаковый формат запросов для любой модели. Переключай провайдера без переписывания кода."},{icon:Zap,title:"Умная маршрутизация",text:"Автоматически отправляй запросы к лучшей модели по цене, скорости или качеству."},{icon:Terminal,title:"Готово за минуту",text:"Скопируй ключ, вставь endpoint и отправь первый запрос. Никаких SDK и сложных настроек."},{icon:ShieldCheck,title:"Прозрачные расходы",text:"Видь каждую модель и каждый токен. Установи лимиты, чтобы расходы были под контролем."}].map(({icon:Icon,title,text}) => <div key={title} className="rounded-[24px] bg-[#ededeb] p-6 transition hover:-translate-y-1 hover:bg-[#e7e7e4]"><Icon size={19} className="mb-10 text-[#719984]"/><h3 className="text-[16px] font-bold">{title}</h3><p className="mt-2 text-[13px] leading-[1.55] text-[#6c6c6a]">{text}</p></div>)}
             </div>
           </section>
+
+           <section id="кейсы" className="border-t border-[#dededb] py-20 sm:py-28">
+             <div className="flex flex-wrap items-end justify-between gap-6">
+               <div>
+                 <div className="mb-4 flex items-center gap-2 text-[11px] font-medium text-[#767676]"><Sparkles size={14} className="text-[#7ea68f}"/> Истории команд</div>
+                 <h2 className="display max-w-[650px] text-[43px] font-extrabold leading-[.98] sm:text-[58px]">Шесть способов<br/>запустить AI в продукте.</h2>
+               </div>
+               <p className="max-w-[270px] text-[13px] leading-relaxed text-[#747472]">Не демо ради демо. Реальные сценарии, где единый шлюз снимает лишнюю инфраструктуру.</p>
+             </div>
+             <div className="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+               {[
+                 { image: "ai-proxy-case-support.png", eyebrow: "Поддержка · Fintech", title: "Ответы стали быстрее, а очередь — короче.", result: "−42% времени ответа", text: "AI-классификация направляет простые вопросы в быструю модель, а сложные — в сильную." },
+                 { image: "ai-proxy-case-sales.png", eyebrow: "Продажи · SaaS", title: "Каждый лид получает следующий шаг.", result: "+31% конверсия", text: "Агент читает контекст разговора и предлагает менеджеру точное действие прямо в CRM." },
+                 { image: "ai-proxy-case-analytics.png", eyebrow: "Аналитика · Retail", title: "От вопроса к отчёту за одну минуту.", result: "2.8× быстрее отчёты", text: "Команда собирает сводки из нескольких источников без ручного копирования и сводных таблиц." },
+                 { image: "ai-proxy-case-agents.png", eyebrow: "Агенты · DevTools", title: "Код-агент, который знает границы.", result: "−38% стоимость", text: "Маршрутизация выбирает модель по сложности задачи и держит дорогие вызовы под контролем." },
+                 { image: "ai-proxy-case-chat.png", eyebrow: "Чат · EdTech", title: "Один наставник для каждого ученика.", result: "4 языка · 1 API", text: "Мультиязычный помощник работает с базой знаний и меняет модель без смены интеграции." },
+                 { image: "ai-proxy-case-media.png", eyebrow: "Медиа · Studio", title: "От идеи до готового материала.", result: "6 моделей · 1 ключ", text: "Текст, изображения и сценарии проходят через один workspace с понятным расходом токенов." },
+               ].map(({ image, eyebrow, title, result, text }) => (
+                 <article key={title} className="case-card group overflow-hidden rounded-[26px] border border-[#dededb] bg-[#f1f1ee] transition hover:-translate-y-1 hover:border-[#b7cbbd]">
+                   <div className="relative h-[245px] overflow-hidden bg-[#e3e3df]">
+                     <img className="case-photo h-full w-full object-cover" src={`/__mockup/images/${image}`} alt="" />
+                     <div className="absolute left-4 top-4 rounded-full bg-[#f7f7f5]/85 px-3 py-1.5 text-[10px] font-semibold text-[#4d4d4b] backdrop-blur-sm">{eyebrow}</div>
+                   </div>
+                   <div className="p-6">
+                     <div className="mb-3 text-[11px] font-semibold uppercase tracking-[.1em] text-[#719984]">{result}</div>
+                     <h3 className="max-w-[300px] text-[19px] font-bold leading-[1.15] tracking-[-.03em]">{title}</h3>
+                     <p className="mt-3 text-[13px] leading-[1.55] text-[#6c6c6a]">{text}</p>
+                     <a href="#возможности" className="mt-5 inline-flex items-center text-[12px] font-semibold text-[#4d6f5b]">Читать кейс <ArrowRight className="ml-1 transition group-hover:translate-x-1" size={13} /></a>
+                   </div>
+                 </article>
+               ))}
+             </div>
+           </section>
 
           <section id="возможности" className="grid items-center gap-12 rounded-[32px] bg-[#292929] px-7 py-10 text-white sm:px-12 sm:py-14 lg:grid-cols-[1fr_1fr]">
             <div><div className="mb-4 flex items-center gap-2 text-[11px] text-[#bdbdb8]"><CircleHelp size={14} className="text-[#9fc8b4]"/> API, который не мешает</div><h2 className="display max-w-[460px] text-[42px] font-extrabold leading-[.98] sm:text-[55px]">Меньше инфраструктуры. Больше продукта.</h2><p className="mt-6 max-w-[420px] text-[14px] leading-relaxed text-[#aaa9a5]">stratus/hub берёт на себя ключи, лимиты, фолбэки и наблюдаемость. Ты строишь продукт — мы держим шлюз.</p><button onClick={copy} className="mt-7 rounded-full bg-[#f3f3f0] px-4 py-3 text-[12px] font-semibold text-[#252525]">{copied ? <Check className="mr-2 inline text-[#6f9c84]" size={14}/> : <Copy className="mr-2 inline" size={14}/>} {copied ? "Скопировано" : "Скопировать API-ключ"}</button></div>
