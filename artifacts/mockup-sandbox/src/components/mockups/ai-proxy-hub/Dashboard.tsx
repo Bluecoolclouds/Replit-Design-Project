@@ -35,7 +35,7 @@ const css = `
   .landing .case-card:hover .case-photo { transform:scale(1.045) }
 `;
 
-const navItems = ["Продукт", "Кейсы", "Возможности", "Тарифы", "FAQ"];
+const navItems = ["Продукт", "Модели", "Кейсы", "Возможности", "Тарифы", "FAQ"];
 
 export function Dashboard() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -73,7 +73,7 @@ export function Dashboard() {
             <div className="appear max-w-[590px]">
               <div className="mb-5 flex items-center gap-2 text-[11px] font-medium text-[#767676]"><span className="h-2 w-2 rounded-full bg-[#83b39e]"/> Для тех, кто строит</div>
               <h1 className="display max-w-[620px] text-[58px] font-extrabold leading-[.94] sm:text-[78px]">Твой код.<br/>Твои модели.</h1>
-              <p className="mt-7 max-w-[460px] text-[17px] leading-[1.55] text-[#666]">Единый API-прокси для OpenAI, Anthropic, Google и других. Подключай инструменты, выбирай модели и плати только за использованные токены.</p>
+               <p className="mt-7 max-w-[460px] text-[17px] leading-[1.55] text-[#666]">Единый API-прокси для OpenAI, Anthropic, Google и других. Один ключ для сотен моделей — выбирай маршрут и плати только за использованные токены.</p>
               <div className="mt-8 flex flex-wrap items-center gap-5">
                 <button onClick={() => setDemoOpen(true)} className="pill rounded-full bg-[#292929] px-5 py-3.5 text-[13px] font-semibold text-white">Начать бесплатно <ArrowRight className="ml-2 inline" size={15}/></button>
                 <a href="#тарифы" className="text-[13px] font-medium underline decoration-[#aaa] underline-offset-4 hover:decoration-black">Тарифы <ArrowRight className="ml-1 inline" size={13}/></a>
@@ -102,6 +102,40 @@ export function Dashboard() {
             <div className="flex flex-wrap items-center justify-between gap-6 text-[#666]">
               {["OpenAI", "Anthropic", "Google AI", "Mistral", "Groq"].map((name, i) => <div key={name} className="flex items-center gap-2 text-[14px] font-semibold"><span className="grid h-5 w-5 place-items-center rounded-md bg-[#dfdfdc] text-[9px] text-[#444]">{["◉", "A", "G", "M", "g"][i]}</span>{name}</div>)}
             </div>
+          </section>
+
+          <section id="модели" className="border-b border-[#dededb] py-20 sm:py-28">
+            <div className="flex flex-wrap items-end justify-between gap-6">
+              <div>
+                <div className="mb-4 flex items-center gap-2 text-[11px] font-medium text-[#767676]"><Network size={14} className="text-[#7ea68f]" /> Живой каталог</div>
+                <h2 className="display max-w-[590px] text-[43px] font-extrabold leading-[.98] sm:text-[58px]">Каждая модель.<br/>Один баланс.</h2>
+              </div>
+              <div className="max-w-[280px] text-[13px] leading-relaxed text-[#747472]">Без подписки и минимального платежа. Сравнивай модели по цене, контексту и скорости в одном месте.</div>
+            </div>
+            <div className="mt-9 flex flex-wrap gap-2">
+              {["Все 186", "Текст 70", "Изображения 40", "Видео 61", "Аудио 13"].map((filter, index) => (
+                <button key={filter} className={`rounded-full px-4 py-2 text-[11px] font-semibold transition ${index === 0 ? "bg-[#292929] text-white" : "bg-[#ededeb] text-[#666] hover:bg-[#e2eee7] hover:text-[#42614f]"}`}>{filter}</button>
+              ))}
+            </div>
+            <div className="mt-5 overflow-hidden rounded-[24px] border border-[#dededb] bg-[#f1f1ee]">
+              <div className="hidden grid-cols-[1.3fr_.65fr_.65fr_.5fr] gap-4 border-b border-[#dededb] px-6 py-4 text-[10px] font-semibold uppercase tracking-[.1em] text-[#8a8a86] sm:grid">
+                <span>Модель</span><span>Контекст</span><span>Вход / 1M</span><span>Выход / 1M</span>
+              </div>
+              {[
+                { provider: "Anthropic", model: "Claude Sonnet 4.6", context: "1M", input: "41 ₽", output: "207 ₽", mark: "C" },
+                { provider: "OpenAI", model: "GPT-5.5", context: "1.1M", input: "69 ₽", output: "413 ₽", mark: "G" },
+                { provider: "Google", model: "Gemini 3.5 Flash", context: "1M", input: "21 ₽", output: "124 ₽", mark: "G" },
+                { provider: "DeepSeek", model: "V4 Pro", context: "1M", input: "18 ₽", output: "55 ₽", mark: "D" },
+              ].map(({ provider, model, context, input, output, mark }) => (
+                <div key={model} className="grid gap-3 border-b border-[#dededb] px-5 py-4 last:border-0 sm:grid-cols-[1.3fr_.65fr_.65fr_.5fr] sm:items-center sm:gap-4 sm:px-6">
+                  <div className="flex items-center gap-3"><span className="grid h-8 w-8 place-items-center rounded-xl bg-[#e2eee7] text-[11px] font-bold text-[#5d846d]">{mark}</span><div><div className="text-[13px] font-bold">{model}</div><div className="text-[10px] text-[#858580]">{provider} · pay as you go</div></div></div>
+                  <div className="text-[12px] text-[#70706c]"><span className="mr-2 text-[10px] text-[#9a9a95] sm:hidden">Контекст</span>{context}</div>
+                  <div className="text-[12px] font-semibold text-[#4d6f5b]"><span className="mr-2 text-[10px] font-normal text-[#9a9a95] sm:hidden">Вход</span>{input}</div>
+                  <div className="text-[12px] font-semibold text-[#4d6f5b]"><span className="mr-2 text-[10px] font-normal text-[#9a9a95] sm:hidden">Выход</span>{output}</div>
+                </div>
+              ))}
+            </div>
+            <div className="mt-5 flex flex-wrap items-center justify-between gap-3 text-[11px] text-[#777]"><span><Check size={13} className="mr-1 inline text-[#76a28f]" /> Цены обновляются из живого каталога</span><a href="#тарифы" className="font-semibold text-[#4d6f5b] underline underline-offset-4">Смотреть все модели <ArrowRight className="ml-1 inline" size={12}/></a></div>
           </section>
 
           <section className="grid gap-4 border-b border-[#dededb] py-10 sm:grid-cols-3 sm:gap-0">
