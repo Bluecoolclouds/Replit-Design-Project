@@ -58,7 +58,7 @@ export function IceCloud() {
           </nav>
           <div className="flex items-center gap-2">
             <button className="hidden items-center gap-1 rounded-full bg-white/65 px-3 py-2 text-[10px] font-semibold text-[#527080] sm:flex"><Globe2 size={13}/>RU</button>
-            <button className="ice-button rounded-full bg-[#173c50] px-4 py-2.5 text-[11px] font-semibold text-white">Начать бесплатно <ArrowRight className="ml-2 inline" size={13}/></button>
+            <button className="ice-button rounded-full bg-[#6daebe] px-4 py-2.5 text-[11px] font-semibold text-[#102f3e] hover:bg-[#62a3b3]">Начать бесплатно <ArrowRight className="ml-2 inline" size={13}/></button>
           </div>
         </header>
 
@@ -69,7 +69,7 @@ export function IceCloud() {
               <h1 className="ice-display max-w-[630px] text-[58px] font-extrabold leading-[.91] text-[#122e40] sm:text-[82px]">Лёгкий слой<br/><span className="text-[#6daebe]">для всех</span> моделей.</h1>
               <p className="mt-7 max-w-[490px] text-[16px] leading-[1.6] text-[#5e7a87]">Один прохладный API-слой для OpenAI, Anthropic, Google и медиа-моделей. Маршрутизация, лимиты и наблюдаемость уже внутри.</p>
               <div className="mt-8 flex flex-wrap items-center gap-4">
-                <button className="ice-button rounded-full bg-[#173c50] px-5 py-3.5 text-[13px] font-semibold text-white">Создать API-ключ <ArrowRight className="ml-2 inline" size={15}/></button>
+                <button className="ice-button rounded-full bg-[#6daebe] px-5 py-3.5 text-[13px] font-semibold text-[#102f3e] hover:bg-[#62a3b3]">Создать API-ключ <ArrowRight className="ml-2 inline" size={15}/></button>
                 <a className="text-[13px] font-semibold text-[#4d7c8e] underline decoration-[#a3ced7] underline-offset-4" href="#models">Смотреть модели <ArrowRight className="ml-1 inline" size={13}/></a>
               </div>
               <div className="mt-9 flex flex-wrap gap-x-5 gap-y-2 text-[11px] text-[#6e8b96]"><span><Check size={13} className="mr-1 inline text-[#62b6b5]"/>Оплата по факту</span><span><LockKeyhole size={13} className="mr-1 inline text-[#62b6b5]"/>Ключи в одном контуре</span></div>
