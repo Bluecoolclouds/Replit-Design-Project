@@ -57,6 +57,17 @@ const css = `
   @keyframes modeIn { from { opacity:0; transform:translateY(9px) scale(.99) } to { opacity:1; transform:translateY(0) scale(1) } }
   .landing .mode-tab { transition:all .25s ease }
   .landing .mode-tab:hover { transform:translateX(4px) }
+  /* Ice Cloud palette carried into the primary hub without changing its imagery or layout. */
+  .landing { background:#fbfdfd; color:#132a3a; }
+  .landing header { background:rgba(255,255,255,.72); border:1px solid rgba(255,255,255,.8); box-shadow:0 10px 35px rgba(71,126,150,.08); }
+  .landing .ice-hero-visual { background:radial-gradient(circle at 62% 21%,rgba(255,255,255,.98),transparent 29%),linear-gradient(145deg,#d9f1f5,#b8dbe7); box-shadow:0 30px 80px rgba(83,154,176,.2); }
+  .landing .ice-gateway-frame { border-color:rgba(255,255,255,.65); background:rgba(237,250,255,.55); box-shadow:inset 0 0 0 1px rgba(255,255,255,.8),0 25px 45px rgba(64,131,151,.19); }
+  .landing .ice-gateway-core { border-color:rgba(255,255,255,.75); background:rgba(212,240,242,.7); color:#4b95aa; box-shadow:0 12px 25px rgba(72,155,171,.16); }
+  .landing .ice-chip { border:1px solid rgba(255,255,255,.75); background:rgba(255,255,255,.75); color:#426879; box-shadow:0 10px 25px rgba(70,135,157,.13); }
+  .landing .ice-primary { border:1px solid rgba(255,255,255,.75); background:#c7e6ec; color:#426879; box-shadow:0 10px 24px rgba(83,154,176,.12); font-weight:700; letter-spacing:-.01em; }
+  .landing .ice-primary:hover { background:#b8dce5; }
+  .landing .ice-border { border-color:#cfe4e8; }
+  .landing .ice-accent { color:#6daebe; }
 `;
 
 const navItems = ["Продукт", "Модели", "Кейсы", "Возможности", "Тарифы", "FAQ"];
@@ -137,23 +148,24 @@ export function Dashboard() {
               <h1 className="display max-w-[620px] text-[58px] font-extrabold leading-[.94] sm:text-[78px]">Твой код.<br/>Твои модели.</h1>
                <p className="mt-7 max-w-[460px] text-[17px] leading-[1.55] text-[#666]">Единый API-прокси для OpenAI, Anthropic, Google и других. Один ключ для сотен моделей — выбирай маршрут и плати только за использованные токены.</p>
               <div className="mt-8 flex flex-wrap items-center gap-5">
-                <button onClick={() => setDemoOpen(true)} className="pill rounded-full bg-[#292929] px-5 py-3.5 text-[13px] font-semibold text-white">Начать бесплатно <ArrowRight className="ml-2 inline" size={15}/></button>
+             <button onClick={() => setDemoOpen(true)} className="pill ice-primary rounded-full px-5 py-3.5 text-[13px]">Начать бесплатно <ArrowRight className="ml-2 inline" size={15}/></button>
                 <a href="#тарифы" className="text-[13px] font-medium underline decoration-[#aaa] underline-offset-4 hover:decoration-black">Тарифы <ArrowRight className="ml-1 inline" size={13}/></a>
               </div>
               <div className="mt-9 flex items-center gap-2 text-[11px] text-[#858585]"><ShieldCheck size={14} className="text-[#76a28f]"/> Без кредитной карты · 10k запросов в месяц</div>
             </div>
-            <div className="appear relative min-h-[420px] overflow-hidden rounded-[34px] bg-[#d9d9d7] p-7 sm:min-h-[530px] sm:p-10" style={{ animationDelay: ".12s" }}>
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_65%_28%,rgba(255,255,255,.95),transparent_25%),linear-gradient(145deg,#d5d5d2,#adadab)]"/>
+             <div className="ice-hero-visual appear relative min-h-[420px] overflow-hidden rounded-[34px] p-7 sm:min-h-[530px] sm:p-10" style={{ animationDelay: ".12s" }}>
+               <div className="absolute -right-20 top-8 h-56 w-56 rounded-full bg-white/30 blur-3xl"/>
+               <div className="absolute -bottom-28 -left-20 h-64 w-64 rounded-full bg-[#8bd4da]/25 blur-3xl"/>
               <div className="relative flex h-full min-h-[365px] items-center justify-center">
                 <div className="float relative w-full max-w-[360px]">
-                  <div className="absolute -left-3 top-11 rounded-2xl bg-[#252525] px-3 py-2 text-[10px] font-medium text-white shadow-xl">your app <Code2 className="ml-2 inline" size={12}/></div>
-                  <div className="relative mx-auto mt-3 grid h-[170px] w-[170px] place-items-center rounded-[42px] border-[10px] border-[#b5b5b2] bg-[#292929] shadow-[0_28px_50px_rgba(35,35,35,.25)] sm:h-[195px] sm:w-[195px]">
-                    <div className="grid h-20 w-20 place-items-center rounded-[24px] border border-[#555] bg-[#343434] text-[#fff]"><Layers3 size={35} strokeWidth={1.25}/></div>
-                    <span className="absolute -right-3 top-8 h-3 w-3 rounded-full bg-[#88bca5] ring-4 ring-[#d9d9d7]"/>
+                   <div className="ice-chip absolute -left-3 top-11 rounded-2xl px-3 py-2 text-[10px] font-semibold">your app <Code2 className="ml-2 inline" size={12}/></div>
+                   <div className="ice-gateway-frame relative mx-auto mt-3 grid h-[170px] w-[170px] place-items-center rounded-[42px] border-[10px] sm:h-[195px] sm:w-[195px]">
+                     <div className="ice-gateway-core grid h-20 w-20 place-items-center rounded-[24px] border"><Layers3 size={35} strokeWidth={1.25}/></div>
+                     <span className="absolute -right-3 top-8 h-3 w-3 rounded-full bg-[#7ad4c7] ring-4 ring-[#d4eef1]"/>
                   </div>
                   <svg className="absolute inset-0 h-full w-full overflow-visible" viewBox="0 0 360 240" fill="none"><path className="draw" d="M35 68 C120 68, 106 122, 163 122 S245 88, 325 92" stroke="#fafafa" strokeWidth="2" strokeLinecap="round"/><path className="draw" d="M43 194 C112 194, 111 150, 163 150 S250 174, 319 155" stroke="#fafafa" strokeWidth="2" strokeLinecap="round" style={{animationDelay:".7s"}}/></svg>
-                  <div className="absolute -right-2 top-14 rounded-2xl bg-[#f7f7f5] px-3 py-2 text-[10px] font-semibold shadow-xl">route / balanced <Zap className="ml-2 inline text-[#7ea68f]" size={12}/></div>
-                  <div className="absolute -bottom-5 left-2 rounded-2xl bg-[#f7f7f5] px-3 py-2 text-[10px] shadow-xl"><span className="mr-2 inline-block h-2 w-2 rounded-full bg-[#82b39d]"/> 99.98% uptime</div>
+                   <div className="ice-chip absolute -right-2 top-14 rounded-2xl px-3 py-2 text-[10px] font-semibold">route / balanced <Zap className="ml-2 inline text-[#59b4b6]" size={12}/></div>
+                   <div className="ice-chip absolute -bottom-5 left-2 rounded-2xl px-3 py-2 text-[10px]"><span className="mr-2 inline-block h-2 w-2 rounded-full bg-[#71ccb9]"/> 99.98% uptime</div>
                 </div>
               </div>
               <div className="relative flex items-center justify-between text-[11px] text-[#5d5d5b]"><span>One gateway. Every model.</span><span className="font-mono">01 / 04</span></div>
