@@ -17,7 +17,7 @@ const styles = `
   @keyframes cloudDrift { 0%,100% { transform: translateX(0) } 50% { transform: translateX(10px) } }
   @keyframes shimmer { 0% { transform: translateX(-130%) } 100% { transform: translateX(130%) } }
   .ice-page * { box-sizing: border-box }
-  .ice-page { color: #132a3a; font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif; background: #fbfdfd; }
+  .ice-page { color: #132a3a; font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif; background: #edf7fb; }
   .ice-page .ice-display { font-family: "DM Sans", "Plus Jakarta Sans", sans-serif; letter-spacing: -.075em; }
   .ice-page button { font: inherit; cursor: pointer; }
   .ice-page .ice-float { animation: iceFloat 7s ease-in-out infinite; }
@@ -34,7 +34,7 @@ const models = [
   { name: "Gemini Flash", provider: "Google", color: "#e3e5fa" },
 ];
 
-export function IceCloud() {
+export function AiProxyIceCopy1GH556P1() {
   const [activeModel, setActiveModel] = useState(0);
   const [copied, setCopied] = useState(false);
   const copyKey = () => {
