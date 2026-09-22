@@ -3,7 +3,6 @@ import {
   ArrowRight,
   AudioLines,
   Check,
-  ChevronDown,
   CircleHelp,
   Code2,
   Copy,
@@ -27,6 +26,7 @@ import {
   Play,
   SlidersHorizontal,
 } from "lucide-react";
+import { Link } from "wouter";
 
 const css = `
   @keyframes float { 0%,100% { transform:translateY(0) rotate(0deg) } 50% { transform:translateY(-9px) rotate(1deg) } }
@@ -81,6 +81,36 @@ const providerMarks: Record<string, { glyph: string; bg: string; color: string }
   ElevenLabs: { glyph: "11", bg: "#ececf0", color: "#4f5361" },
 };
 
+type CatalogFilterId = "all" | "chat" | "images" | "video" | "audio" | "embeddings";
+
+const catalogFilters: Array<{ id: CatalogFilterId; label: string; count: string }> = [
+  { id: "all", label: "Все", count: "186" },
+  { id: "chat", label: "Чат", count: "70" },
+  { id: "images", label: "Изображения", count: "40" },
+  { id: "video", label: "Видео", count: "61" },
+  { id: "audio", label: "Аудио", count: "13" },
+  { id: "embeddings", label: "Эмбеддинги и поиск по ним", count: "2" },
+];
+
+const catalogModels: Array<{
+  provider: string;
+  model: string;
+  type: string;
+  category: Exclude<CatalogFilterId, "all">;
+  context: string;
+  input: string;
+  output: string;
+}> = [
+  { provider: "Anthropic", model: "Claude Sonnet 4.6", type: "Чат", category: "chat", context: "1M", input: "41 ₽", output: "207 ₽" },
+  { provider: "OpenAI", model: "GPT-5.5", type: "Чат", category: "chat", context: "1.1M", input: "69 ₽", output: "413 ₽" },
+  { provider: "Google", model: "Gemini 3.5 Flash", type: "Чат", category: "chat", context: "1M", input: "21 ₽", output: "124 ₽" },
+  { provider: "DeepSeek", model: "V4 Pro", type: "Чат", category: "chat", context: "1M", input: "18 ₽", output: "55 ₽" },
+  { provider: "OpenAI", model: "GPT Image", type: "Изображения", category: "images", context: "—", input: "—", output: "от 2 ₽" },
+  { provider: "Google", model: "Veo", type: "Видео", category: "video", context: "—", input: "—", output: "от 38 ₽" },
+  { provider: "ElevenLabs", model: "Eleven Multilingual v3", type: "Аудио", category: "audio", context: "—", input: "—", output: "от 1 ₽" },
+  { provider: "OpenAI", model: "text-embedding-3-large", type: "Эмбеддинги и поиск", category: "embeddings", context: "—", input: "от 2 ₽", output: "—" },
+];
+
 function ProviderMark({ provider, size = "md" }: { provider: string; size?: "sm" | "md" }) {
   const mark = providerMarks[provider] ?? { glyph: provider.slice(0, 1), bg: "#e6f3f5", color: "#547f8d" };
   return (
@@ -100,26 +130,36 @@ export function Dashboard() {
   const [copied, setCopied] = useState(false);
   const [language, setLanguage] = useState<"RU" | "EN">("RU");
   const [demoOpen, setDemoOpen] = useState(false);
-  const [testKey, setTestKey] = useState<string | null>(null);
+  const [testKey, setTestKey] = useState<string | null>(() => localStorage.getItem("stratus-demo-key"));
   const [registrationOpen, setRegistrationOpen] = useState(false);
   const [registrationEmail, setRegistrationEmail] = useState("");
   const [activeMode, setActiveMode] = useState<"coding" | "studio" | "chat">("coding");
   const [activePrice, setActivePrice] = useState(0);
   const [activePriceCategory, setActivePriceCategory] = useState<"coding" | "chat" | "studio">("coding");
+  const [catalogFilter, setCatalogFilter] = useState<CatalogFilterId>("all");
+  const [catalogQuery, setCatalogQuery] = useState("");
+  const visibleCatalogModels = catalogModels.filter((model) => {
+    const matchesFilter = catalogFilter === "all" || model.category === catalogFilter;
+    const normalizedQuery = catalogQuery.trim().toLocaleLowerCase("ru");
+    const matchesQuery = !normalizedQuery || `${model.model} ${model.provider} ${model.type}`.toLocaleLowerCase("ru").includes(normalizedQuery);
+    return matchesFilter && matchesQuery;
+  });
   const copy = () => {
-    navigator.clipboard?.writeText("sk_live_••••••••8f2a");
+     navigator.clipboard?.writeText(testKey ?? "sk_test_demo");
     setCopied(true);
     setTimeout(() => setCopied(false), 1400);
   };
   const issueTestKey = () => {
-    setTestKey("sk_test_" + Math.random().toString(36).slice(2, 10) + "••••");
+    const next = "sk_test_" + Math.random().toString(36).slice(2, 12) + "••••";
+    localStorage.setItem("stratus-demo-key", next);
+    setTestKey(next);
   };
   const generateTestKey = () => {
     setRegistrationEmail("");
     setRegistrationOpen(true);
   };
   const completeRegistration = () => {
-    if (!registrationEmail.trim()) return;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(registrationEmail.trim())) return;
     issueTestKey();
     setRegistrationOpen(false);
   };
@@ -158,7 +198,7 @@ export function Dashboard() {
           <div className="flex items-center gap-2">
             <button className="hidden items-center gap-1 rounded-full bg-[#dededc] px-3 py-2 text-[10px] font-semibold sm:flex" onClick={() => setLanguage(language === "RU" ? "EN" : "RU")}><Globe2 size={13}/>{language}</button>
             <button aria-label="Переключить тему" className="grid h-8 w-8 place-items-center rounded-full bg-[#dededc] text-[#343434] hover:bg-[#d4d4d1]"><Moon size={14}/></button>
-            <button onClick={() => setDemoOpen(true)} className="pill hidden rounded-full bg-[#292929] px-4 py-2.5 text-[11px] font-semibold text-white sm:block">Открыть dashboard <ArrowRight className="ml-2 inline" size={13}/></button>
+             <Link href="/dashboard" data-testid="link-open-dashboard" className="pill hidden rounded-full bg-[#292929] px-4 py-2.5 text-[11px] font-semibold text-white sm:block">Открыть dashboard <ArrowRight className="ml-2 inline" size={13}/></Link>
             <button aria-label="Открыть меню" className="grid h-8 w-8 place-items-center rounded-full bg-[#dededc] md:hidden" onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? <X size={15}/> : <Menu size={15}/>}</button>
           </div>
         </header>
@@ -260,10 +300,23 @@ export function Dashboard() {
                          <div className="mt-1 text-[16px] font-bold tracking-[-.03em]">{title}</div>
                          <div className="mt-1 text-[11px] text-[#777773]">{models}</div>
                        </div>
-                       {image ? <img src={`/__mockup/images/${image}`} alt="" className="hidden h-[70px] w-[94px] rounded-xl object-cover opacity-90 sm:block"/> : <div className="hidden h-[70px] w-[94px] rounded-xl bg-[#e6f0f2] sm:block"><div className="m-3 h-1 rounded-full bg-[#9dc8d0]"/><div className="m-3 mt-2 h-1 w-2/3 rounded-full bg-[#c7dfe3]"/><div className="m-3 mt-2 h-1 w-1/2 rounded-full bg-[#c7dfe3]"/></div>}
+                       {image ? <img src={`${import.meta.env.BASE_URL}images/${image}`} alt="" className="hidden h-[70px] w-[94px] rounded-xl object-cover opacity-90 sm:block"/> : <div className="hidden h-[70px] w-[94px] rounded-xl bg-[#e6f0f2] sm:block"><div className="m-3 h-1 rounded-full bg-[#9dc8d0]"/><div className="m-3 mt-2 h-1 w-2/3 rounded-full bg-[#c7dfe3]"/><div className="m-3 mt-2 h-1 w-1/2 rounded-full bg-[#c7dfe3]"/></div>}
                      </div>
                    ))}
                  </div>
+               </div>
+             </div>
+           </section>
+           <section id="faq" className="border-t border-[#dededb] py-20 sm:py-28">
+             <div className="grid gap-10 lg:grid-cols-[.7fr_1.3fr]">
+               <div><div className="mb-4 text-[11px] font-semibold uppercase tracking-[.12em] text-[#6b9ead]">FAQ</div><h2 className="display text-[43px] font-extrabold leading-[.98] sm:text-[58px]">Спокойно<br/>о важном.</h2><p className="mt-5 max-w-[300px] text-[13px] leading-relaxed text-[#747472]">Короткие ответы о маршрутизации, данных и тестовом доступе.</p></div>
+               <div className="space-y-2">
+                 {[
+                   ["Это официальный доступ к моделям?", "Да. Stratus Hub маршрутизирует запросы к официальным API провайдеров и не заменяет их аккаунты."],
+                   ["Что происходит с данными?", "Мы не используем содержимое запросов для обучения. Для продакшена доступны отдельные лимиты и журналы доступа."],
+                   ["Тестовый ключ настоящий?", "Нет. Это демонстрационный ключ для знакомства с интерфейсом и форматом интеграции. Провайдерский аккаунт не создаётся."],
+                   ["Как начать интеграцию?", "Используйте OpenAI-compatible endpoint из блока быстрого старта. Один ключ, единый баланс и понятный роутинг."]
+                 ].map(([question, answer], index) => <details key={question} open={index === 0} className="group rounded-[20px] border border-[#dededb] bg-[#f1f1ee] px-5 py-4"><summary className="flex cursor-pointer list-none items-center justify-between text-[14px] font-bold">{question}<span className="text-[#6b9ead] transition group-open:rotate-45 text-xl">+</span></summary><p className="max-w-[600px] pt-3 text-[13px] leading-relaxed text-[#6c6c6a]">{answer}</p></details>)}
                </div>
              </div>
            </section>
@@ -353,17 +406,25 @@ export function Dashboard() {
               </div>
                <div className="mt-4 flex items-center justify-between text-[10px] text-[#858580]"><span><Check size={13} className="mr-1 inline text-[#72aeb8]"/> Цены обновляются из живого каталога</span><span className="font-semibold text-[#4d7f92]">{activePriceCategory === "coding" ? "Кодинг · 3 модели" : activePriceCategory === "chat" ? "Чат · 3 модели" : "Studio · 3 модели"}</span></div>
               <div className="mt-16 border-t border-[#dededb] pt-12">
-                 <div className="flex flex-wrap items-end justify-between gap-5"><div><div className="mb-3 text-[11px] font-semibold uppercase tracking-[.12em] text-[#6b9ead]">Полный каталог</div><h3 className="display text-[35px] font-extrabold leading-none sm:text-[48px]">Все модели.<br/>В одном месте.</h3></div><a href="#модели" className="text-[12px] font-semibold text-[#4d7f92] underline underline-offset-4">Открыть каталог · 186 моделей <ArrowRight className="ml-1 inline" size={12}/></a></div>
+                  <div className="flex flex-wrap items-end justify-between gap-5"><div><div className="mb-3 text-[11px] font-semibold uppercase tracking-[.12em] text-[#6b9ead]">Каталог моделей</div><h3 className="display text-[35px] font-extrabold leading-none sm:text-[48px]">Все модели.<br/>В одном месте.</h3><p className="mt-4 text-[13px] text-[#6c7d82]">Модели API и Studio · оплата только за использование</p></div><a href="#модели" className="text-[12px] font-semibold text-[#4d7f92] underline underline-offset-4">Открыть каталог · 186 моделей <ArrowRight className="ml-1 inline" size={12}/></a></div>
+                 <div className="mt-7 rounded-[24px] border border-[#d8e7ea] bg-[#eaf4f5] p-4 sm:p-5">
+                   <div className="flex flex-col gap-4">
+                     <label className="flex items-center gap-3 rounded-2xl border border-white/80 bg-white/75 px-4 py-3 shadow-[0_8px_24px_rgba(80,145,165,.06)]">
+                       <Search size={16} className="shrink-0 text-[#6b9ead]" aria-hidden="true"/>
+                       <input value={catalogQuery} onChange={(event) => setCatalogQuery(event.target.value)} placeholder="Найти модель или вендора" aria-label="Найти модель или вендора" className="w-full bg-transparent text-[13px] text-[#264856] outline-none placeholder:text-[#82959b]"/>
+                     </label>
+                     <div className="flex flex-wrap gap-2" role="tablist" aria-label="Фильтры каталога моделей">
+                       {catalogFilters.map((filter) => {
+                         const isActive = catalogFilter === filter.id;
+                         return <button key={filter.id} type="button" role="tab" aria-selected={isActive} onClick={() => setCatalogFilter(filter.id)} className={`rounded-full px-3.5 py-2 text-[11px] font-semibold transition ${isActive ? "bg-[#292929] text-white shadow-[0_6px_16px_rgba(41,41,41,.12)]" : "bg-white/75 text-[#55717a] hover:bg-white hover:text-[#3f6978]"}`}>{filter.label}{filter.id !== "embeddings" && <span className={isActive ? "text-[#b5dce3]" : "text-[#9aafb4]"}> {filter.count}</span>}</button>;
+                       })}
+                     </div>
+                   </div>
+                 </div>
                 <div className="mt-7 overflow-hidden rounded-[24px] border border-[#dededb] bg-[#f1f1ee]">
                    <div className="hidden gap-3 border-b border-[#dededb] bg-[#eaf4f5] px-5 py-3 text-[9px] font-semibold uppercase tracking-[.1em] text-[#8b9398] sm:grid sm:grid-cols-[1.3fr_.55fr_.5fr_.45fr_.45fr] sm:items-center sm:gap-4 sm:px-6"><div>Название модели</div><div>Формат</div><div>Контекст</div><div>Вход / 1M</div><div>Выход / 1M</div></div>
-                  {[
-                    { provider: "Anthropic", model: "Claude Sonnet 4.6", type: "Текст", context: "1M", input: "41 ₽", output: "207 ₽", mark: "C" },
-                    { provider: "OpenAI", model: "GPT-5.5", type: "Текст", context: "1.1M", input: "69 ₽", output: "413 ₽", mark: "G" },
-                    { provider: "Google", model: "Gemini 3.5 Flash", type: "Текст", context: "1M", input: "21 ₽", output: "124 ₽", mark: "G" },
-                    { provider: "DeepSeek", model: "V4 Pro", type: "Текст", context: "1M", input: "18 ₽", output: "55 ₽", mark: "D" },
-                    { provider: "Mistral", model: "Pixtral Large", type: "Изображения", context: "128K", input: "37 ₽", output: "—", mark: "M" },
-                    ].map((model) => <div key={model.model} className="grid gap-3 border-b border-[#dededb] px-5 py-4 last:border-0 sm:grid-cols-[1.3fr_.55fr_.5fr_.45fr_.45fr] sm:items-center sm:gap-4 sm:px-6"><div className="flex items-center gap-3"><ProviderMark provider={model.provider} size="sm"/><div><div className="text-[13px] font-bold">{model.model}</div><div className="text-[10px] text-[#858580]">{model.provider} · pay as you go</div></div></div><div className="text-[11px] text-[#777773]">{model.type}</div><div className="text-[11px] text-[#777773]">{model.context}</div><div className="text-[11px] font-semibold text-[#4d7f92]">{model.input}</div><div className="text-[11px] font-semibold text-[#4d7f92]">{model.output}</div></div>)}
-                  <div className="flex items-center justify-between border-t border-[#dededb] px-5 py-3 text-[10px] text-[#858580]"><span>Показано 5 из 186 моделей</span><a href="#модели" className="font-semibold text-[#4d6f5b]">Смотреть полный каталог →</a></div>
+                   {visibleCatalogModels.length > 0 ? visibleCatalogModels.map((model) => <div key={model.model} className="grid gap-3 border-b border-[#dededb] px-5 py-4 last:border-0 sm:grid-cols-[1.3fr_.55fr_.5fr_.45fr_.45fr] sm:items-center sm:gap-4 sm:px-6"><div className="flex items-center gap-3"><ProviderMark provider={model.provider} size="sm"/><div><div className="text-[13px] font-bold">{model.model}</div><div className="text-[10px] text-[#858580]">{model.provider} · pay as you go</div></div></div><div className="text-[11px] text-[#777773]">{model.type}</div><div className="text-[11px] text-[#777773]">{model.context}</div><div className="text-[11px] font-semibold text-[#4d7f92]">{model.input}</div><div className="text-[11px] font-semibold text-[#4d7f92]">{model.output}</div></div>) : <div className="px-5 py-12 text-center"><div className="text-[14px] font-semibold text-[#264856]">Модель не найдена</div><div className="mt-2 text-[11px] text-[#777773]">Попробуй изменить запрос или выбрать другую категорию.</div><button type="button" onClick={() => { setCatalogQuery(""); setCatalogFilter("all"); }} className="mt-5 rounded-full bg-[#d8edf0] px-4 py-2 text-[11px] font-semibold text-[#4d7f92] hover:bg-[#c9e6eb]">Сбросить фильтры</button></div>}
+                   <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[#dededb] px-5 py-3 text-[10px] text-[#858580]"><span>Показано {visibleCatalogModels.length} из {catalogFilter === "all" ? "186" : catalogFilters.find((filter) => filter.id === catalogFilter)?.count} моделей</span><a href="#модели" className="font-semibold text-[#4d6f5b]">Смотреть полный каталог →</a></div>
                 </div>
               </div>
             </section>
@@ -387,7 +448,7 @@ export function Dashboard() {
                ].map(({ image, eyebrow, title, result, text }) => (
                  <article key={title} className="case-card group overflow-hidden rounded-[26px] border border-[#dededb] bg-[#f1f1ee] transition hover:-translate-y-1 hover:border-[#b7cbbd]">
                    <div className="relative h-[245px] overflow-hidden bg-[#e3e3df]">
-                     <img className="case-photo h-full w-full object-cover" src={`/__mockup/images/${image}`} alt="" />
+                     <img className="case-photo h-full w-full object-cover" src={`${import.meta.env.BASE_URL}images/${image}`} alt="" />
                      <div className="absolute left-4 top-4 rounded-full bg-[#f7f7f5]/85 px-3 py-1.5 text-[10px] font-semibold text-[#4d4d4b] backdrop-blur-sm">{eyebrow}</div>
                    </div>
                    <div className="p-6">

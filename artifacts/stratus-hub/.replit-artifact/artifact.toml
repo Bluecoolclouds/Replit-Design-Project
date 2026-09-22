@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Stratus Hub"
+description = "A production-ready Russian landing page for an AI proxy hub with model discovery, interactive work modes, pricing, API-key onboarding, responsive navigation, and polished cloud-inspired visuals."
+version = "1.0.0"
+id = "artifacts/stratus-hub"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 24619
+
+[services.development]
+run = "pnpm --filter @workspace/stratus-hub run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/stratus-hub", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/stratus-hub/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "24619"
+BASE_PATH = "/"

@@ -1,0 +1,35 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+:root {
+  --background: 160 20% 98%;
+  --foreground: 203 49% 15%;
+  --border: 177 20% 87%;
+  --input: 177 20% 87%;
+  --ring: 190 35% 62%;
+  --card: 160 20% 98%;
+  --card-foreground: 203 49% 15%;
+  --primary: 190 42% 72%;
+  --primary-foreground: 203 49% 15%;
+  --secondary: 185 46% 94%;
+  --secondary-foreground: 203 49% 25%;
+  --muted: 160 12% 94%;
+  --muted-foreground: 195 12% 43%;
+  --accent: 185 46% 94%;
+  --accent-foreground: 203 49% 15%;
+  --destructive: 0 60% 50%;
+  --destructive-foreground: 0 0% 100%;
+  --popover: 160 20% 98%;
+  --popover-foreground: 203 49% 15%;
+  --app-font-sans: 'Plus Jakarta Sans', sans-serif;
+  --app-font-serif: 'DM Sans', sans-serif;
+  --app-font-mono: 'SFMono-Regular', Consolas, monospace;
+  --radius: 1rem;
+}
+.dark { --background: 203 35% 11%; --foreground: 185 35% 94%; --card: 203 30% 15%; --card-foreground: 185 35% 94%; --border: 203 20% 25%; --muted: 203 22% 20%; --muted-foreground: 185 15% 70%; }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: hsl(var(--background)); color: hsl(var(--foreground)); font-family: var(--app-font-sans); }
+button, a, summary { -webkit-tap-highlight-color: transparent; }
+:focus-visible { outline: 3px solid #83cbd3; outline-offset: 3px; }
