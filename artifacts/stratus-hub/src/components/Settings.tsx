@@ -163,6 +163,7 @@ export function Settings() {
           <div className="workspace-navlinks">
             <Link href="/dashboard" data-testid="link-settings-dashboard"><ArrowLeft size={13}/> Кабинет</Link>
             <Link href="/settings" className="active" data-testid="link-settings-active">Настройки</Link>
+            <Link href="/docs" data-testid="link-settings-docs">Документация</Link>
           </div>
           <div className="workspace-navright">
             <span className="workspace-card-label" style={{textTransform:'none', letterSpacing:'normal'}}>nicklodeon555</span>
@@ -179,6 +180,7 @@ export function Settings() {
             <Link href="/" className="workspace-back" data-testid="link-mobile-home">Вернуться на сайт</Link>
             <Link href="/dashboard" className="workspace-back" data-testid="link-mobile-dashboard">Кабинет</Link>
             <Link href="/settings" className="workspace-back" data-testid="link-mobile-settings">Настройки</Link>
+            <Link href="/docs" className="workspace-back" data-testid="link-mobile-docs">Документация</Link>
           </div>
         )}
 

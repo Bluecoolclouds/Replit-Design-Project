@@ -1,0 +1,1 @@
+- [Documentation taxonomy versus product support](documentation-taxonomy.md) — reference-site navigation is a planning outline, not evidence that Stratus Hub integrations exist.
