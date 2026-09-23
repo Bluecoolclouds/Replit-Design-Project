@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Link, useLocation, useRoute } from 'wouter';
-import { Search, Menu, ChevronRight, ChevronDown, Copy, Check, ArrowLeft, FileKey2 } from 'lucide-react';
+import { Search, Menu, ChevronRight, ChevronDown, Copy, Check, ArrowLeft, FileKey2, Info } from 'lucide-react';
 import { docsGroups, docsArticles, type DocEntry } from './docs-data';
 import './Docs.css';
 
@@ -135,7 +135,7 @@ export function Docs() {
                       data-testid={`link-doc-${entry.slug}`}
                     >
                       <span>{entry.title}</span>
-                      {!docsArticles[entry.slug] && <span className="docs-draft-label">готовится</span>}
+                      <span className="docs-draft-label">{docsArticles[entry.slug] ? 'подготовка' : 'нет статьи'}</span>
                     </Link>
                   ))}
                 </div>
@@ -171,6 +171,10 @@ export function Docs() {
               <>
                 <div className="docs-eyebrow" data-testid="text-doc-category">{activeEntry.category}</div>
                 <h1 className="docs-title" data-testid="text-doc-title">{activeEntry.title}</h1>
+                 <div className="docs-availability" role="note" data-testid="docs-availability">
+                   <Info size={16} aria-hidden="true" />
+                   <span>Материал для подготовки, не подтверждение подключения. Сейчас сервер Stratus Hub предоставляет только проверку состояния /api/healthz; действующие ключи, модели и API генерации ещё не доступны.</span>
+                 </div>
                 
                 {article ? (
                   <>
@@ -206,7 +210,7 @@ export function Docs() {
                       <FileKey2 size={24} />
                     </div>
                     <h3>Раздел в разработке</h3>
-                    <p>Эта инструкция пока не опубликована. Сейчас доступны «Быстрый старт», curl, OpenAI Python, OpenAI JavaScript и «Частые ошибки».</p>
+                    <p>Для этой темы пока нет статьи. Выберите другую тему из навигации.</p>
                   </div>
                 )}
               </>

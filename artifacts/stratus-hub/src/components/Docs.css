@@ -154,7 +154,7 @@
   justify-content: space-between;
   gap: 8px;
 }
-.docs-draft-label { color: #91aab0; font-size: 9px; white-space: nowrap; }
+.docs-draft-label { color: #738e96; font-size: 9px; white-space: nowrap; }
 .docs-item:hover {
   background: rgba(237, 245, 246, 0.6);
   color: #315460;
@@ -256,6 +256,21 @@
   margin-bottom: 48px;
   font-weight: 400;
 }
+
+.docs-availability {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px 16px;
+  margin: 0 0 28px;
+  border: 1px solid #d8e9eb;
+  border-radius: 12px;
+  background: #eaf5f6;
+  color: #315d6d;
+  font-size: 12px;
+  line-height: 1.6;
+}
+.docs-availability svg { flex: none; margin-top: 2px; }
 
 .docs-section {
   margin-bottom: 48px;
