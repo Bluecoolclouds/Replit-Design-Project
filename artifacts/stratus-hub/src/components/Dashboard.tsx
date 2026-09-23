@@ -43,16 +43,22 @@ const css = `
   .landing .pill:hover { transform:translateY(-1px); box-shadow:0 8px 20px rgba(31,31,31,.1) }
   .landing .case-photo { transition:transform .5s cubic-bezier(.2,.75,.2,1) }
   .landing .case-card:hover .case-photo { transform:scale(1.045) }
-  @keyframes mediaStep { 0%, 6% { opacity:.42; transform:translateX(0) } 10%, 23% { opacity:1; transform:translateX(8px) } 27%, 100% { opacity:.42; transform:translateX(0) } }
-  @keyframes mediaPulse { 0%, 6% { transform:scale(.92); opacity:.6 } 10%, 23% { transform:scale(1.08); opacity:1 } 27%, 100% { transform:scale(.92); opacity:.6 } }
-  .landing .media-step { animation:mediaStep 16s ease-in-out infinite }
-  .landing .media-step:nth-child(2) { animation-delay:4s }
-  .landing .media-step:nth-child(3) { animation-delay:8s }
-  .landing .media-step:nth-child(4) { animation-delay:12s }
-  .landing .media-pulse { animation:mediaPulse 16s ease-in-out infinite }
-  .landing .media-step:nth-child(2) .media-pulse { animation-delay:4s }
-  .landing .media-step:nth-child(3) .media-pulse { animation-delay:8s }
-  .landing .media-step:nth-child(4) .media-pulse { animation-delay:12s }
+  @keyframes mediaStep {
+    0%, 25%, 100% { transform:translateX(0); border-color:#dededb; background:#f1f1ee; box-shadow:none }
+    3%, 20% { transform:translateX(5px); border-color:#a9d3db; background:#e8f4f6; box-shadow:0 10px 24px rgba(77,140,159,.10) }
+  }
+  @keyframes mediaPulse {
+    0%, 25%, 100% { transform:scale(1); background:#dcebe1; color:#5c866e }
+    3%, 20% { transform:scale(1.08); background:#c2e6ec; color:#397e91 }
+  }
+  .landing .media-step { animation:mediaStep 12s ease-in-out infinite; animation-delay:var(--media-delay,0s) }
+  .landing .media-step:nth-child(2) { --media-delay:-9s }
+  .landing .media-step:nth-child(3) { --media-delay:-6s }
+  .landing .media-step:nth-child(4) { --media-delay:-3s }
+  .landing .media-pulse { animation:mediaPulse 12s ease-in-out infinite; animation-delay:var(--media-delay,0s) }
+  @media (prefers-reduced-motion: reduce) {
+    .landing .media-step, .landing .media-pulse { animation:none; transform:none }
+  }
   .landing .mode-preview { animation:modeIn .42s cubic-bezier(.2,.75,.2,1) both }
   @keyframes modeIn { from { opacity:0; transform:translateY(9px) scale(.99) } to { opacity:1; transform:translateY(0) scale(1) } }
   .landing .mode-tab { transition:all .25s ease }
@@ -284,7 +290,7 @@ export function Dashboard() {
            <section id="продукт" className="border-y border-[#dededb] py-20 sm:py-28">
              <div className="grid gap-12 lg:grid-cols-[.78fr_1.22fr] lg:gap-20">
                <div>
-                 <div className="mb-4 flex items-center gap-2 text-[11px] font-medium text-[#767676]"><Sparkles size={14} className="text-[#73aabd}"/> Один слой для всего</div>
+                 <div className="mb-4 flex items-center gap-2 text-[11px] font-medium text-[#767676]"><Sparkles size={14} className="text-[#73aabd]"/> Один слой для всего</div>
                  <h2 className="display max-w-[490px] text-[43px] font-extrabold leading-[.98] sm:text-[58px]">От идеи<br/>до готового медиа.</h2>
                  <p className="mt-6 max-w-[390px] text-[15px] leading-[1.6] text-[#6c6c6a]">Изображения, видео, музыка, озвучка и понимание файлов — в одном потоке.</p>
                  <div className="mt-8 flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[.12em] text-[#6b9ead]"><span className="h-2 w-2 rounded-full bg-[#8acbd4]"/> Один workspace · четыре типа контента</div>
