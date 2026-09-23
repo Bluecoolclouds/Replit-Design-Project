@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { Link } from "wouter";
 import { SpendChart } from "./SpendChart";
+import { ModelPrices } from "./ModelPrices";
 import {
   ArrowUpRight, Check, CircleHelp, Clock3,
   Copy, FileKey2, Filter, KeyRound, LayoutDashboard, Menu, Search,
@@ -10,12 +11,6 @@ import {
 type Range = "24 часа" | "7 дней" | "30 дней";
 type RequestLog = { timestamp: string; keyName: string; model: string; transport: string; status: "OK" | "Ошибка"; tokens: string; error: string };
 
-const multipliers = [
-  { provider: "OpenAI", models: [["GPT-5.5", "×4.5"], ["GPT-4o Transcribe", "×1"]] },
-  { provider: "Anthropic", models: [["Claude Sonnet 4.6", "×2.2"], ["Claude Haiku 4.5", "×0.8"]] },
-  { provider: "Google", models: [["Gemini 3.5 Flash", "×1.5"], ["Gemini 3.5 Pro", "×3.1"]] },
-  { provider: "DeepSeek", models: [["DeepSeek V4 Pro", "×0.2"], ["DeepSeek V4.1 Flash", "×0.3"]] },
-];
 const logs: RequestLog[] = [
   { timestamp: "01:13:14", keyName: "user:nicklodeon555", model: "gpt-5.5", transport: "HTTP", status: "OK", tokens: "90", error: "—" },
   { timestamp: "01:13:04", keyName: "digi", model: "DeepSeek V4 Pro", transport: "HTTP", status: "OK", tokens: "1", error: "—" },
@@ -23,10 +18,6 @@ const logs: RequestLog[] = [
   { timestamp: "00:58:21", keyName: "staging-key", model: "Claude Sonnet 4.6", transport: "HTTP", status: "Ошибка", tokens: "0", error: "rate_limit" },
   { timestamp: "23:49:08", keyName: "user:nicklodeon555", model: "Gemini 3.5 Flash", transport: "HTTP", status: "OK", tokens: "420", error: "—" },
 ];
-
-function Mark({ provider }: { provider: string }) {
-  return <span className="workspace-mark">{provider === "Anthropic" ? "A" : provider === "DeepSeek" ? "DS" : provider[0]}</span>;
-}
 
 export function Workspace() {
   const [range, setRange] = useState<Range>("7 дней");
@@ -65,9 +56,9 @@ export function Workspace() {
         <header className="workspace-head"><div><div className="workspace-eyebrow">Личный workspace</div><h1 data-testid="text-user-name">Привет, Никита.</h1><p className="workspace-sub">Все маршруты, ключи и расходы — под одним контролем.</p></div><div className="workspace-range" role="group" aria-label="Период графика">{(["24 часа", "7 дней", "30 дней"] as Range[]).map((item) => <button key={item} className={range === item ? "active" : ""} onClick={() => setRange(item)} data-testid={`button-range-${item}`}>{item}</button>)}</div></header>
         <main className="workspace-grid">
           <section className="workspace-card workspace-bonus" data-testid="card-bonus"><div><div className="workspace-eyebrow">Бонусная программа</div><strong>+30% <span style={{fontSize:13,letterSpacing:0,fontFamily:"inherit"}}>токенов в подарок</span></strong><p>При пополнении от 500 ₽ · действует до 23 сентября</p></div><button className="workspace-button" data-testid="button-claim-bonus">Получить бонус <ArrowUpRight size={13} style={{verticalAlign:"middle"}}/></button></section>
-          <section className="workspace-metrics"><div className="workspace-metric" data-testid="metric-balance"><div className="workspace-card-label">Баланс токенов</div><strong>23,85 млн</strong><small className="up"><ArrowUpRight size={12}/> 8,4% к прошлой неделе</small></div><div className="workspace-metric" data-testid="metric-requests"><div className="workspace-card-label">Запросы за {range.toLowerCase()}</div><strong>20,99 тыс.</strong><small className="up"><ArrowUpRight size={12}/> 12,7% активности</small></div><div className="workspace-metric" data-testid="metric-spend"><div className="workspace-card-label">Списано токенов</div><strong>759,27 млн</strong><small>с учётом коэффициентов и кеша</small></div></section>
+          <section className="workspace-metrics"><div className="workspace-metric" data-testid="metric-balance"><div className="workspace-card-label">Баланс токенов</div><strong>23,85 млн</strong><small className="up"><ArrowUpRight size={12}/> 8,4% к прошлой неделе</small></div><div className="workspace-metric" data-testid="metric-requests"><div className="workspace-card-label">Запросы за {range.toLowerCase()}</div><strong>20,99 тыс.</strong><small className="up"><ArrowUpRight size={12}/> 12,7% активности</small></div><div className="workspace-metric" data-testid="metric-spend"><div className="workspace-card-label">Списано токенов</div><strong>759,27 млн</strong><small>демонстрационная метрика</small></div></section>
           <SpendChart key={range} range={range} />
-          <section className="workspace-card workspace-multipliers" data-testid="card-multipliers"><div className="workspace-card-label">Стоимость маршрутов</div><h2 style={{marginTop:6}}>Коэффициенты моделей</h2>{multipliers.map(group=><div className="workspace-multiplier" key={group.provider}><div className="workspace-provider"><Mark provider={group.provider}/>{group.provider}</div><div>{group.models.map(([model, cost])=><div className="workspace-model" key={model}><span>{model}</span><b>{cost}</b></div>)}</div></div>)}</section>
+          <ModelPrices />
           <section className="workspace-card" id="keys" data-testid="card-api-key"><div className="workspace-card-label">Доступ к API</div><h2 style={{marginTop:6}}>Один ключ для всех моделей</h2><div className="workspace-key"><KeyRound size={13}/><span>sk_live_stratus_••••••••</span><button onClick={copyKey} data-testid="button-copy-api-key">{copied ? <Check size={14}/> : <Copy size={14}/>}</button></div><div className="workspace-support"><Link href="/docs" data-testid="link-documentation"><FileKey2 size={13}/> Документация</Link><a href="#support" data-testid="link-support"><CircleHelp size={13}/> Поддержка</a></div></section>
           <section className="workspace-card" id="support" data-testid="card-health"><div className="workspace-card-label">Состояние сервиса</div><h2 style={{marginTop:6}}>Всё работает штатно</h2><div style={{display:"flex",alignItems:"center",gap:7,marginTop:18,fontSize:11,color:"#4d9182"}}><ShieldCheck size={16}/> 99,98% uptime за 30 дней</div><div className="workspace-support"><a href="#status" data-testid="link-status"><Clock3 size={13}/> Статус системы</a><a href="#telegram" data-testid="link-telegram"><Send size={13}/> Telegram-канал</a></div></section>
           <section className="workspace-card workspace-log" id="logs" data-testid="card-request-logs"><div className="workspace-log-head"><div><div className="workspace-card-label">История активности</div><h2 style={{marginTop:6}}>Полные логи запросов</h2></div><div className="workspace-controls"><div className="workspace-search-wrap"><Search size={13}/><input className="workspace-search" aria-label="Поиск по логам" placeholder="Модель или ключ" value={query} onChange={(e) => setQuery(e.target.value)} data-testid="input-log-search"/></div><select className="workspace-select" aria-label="Фильтр транспорта" value={transport} onChange={(e) => setTransport(e.target.value)} data-testid="select-log-transport"><option>Все</option><option>HTTP</option><option>SDK</option></select><button className="workspace-icon" aria-label="Фильтры" data-testid="button-log-filter"><Filter size={14}/></button></div></div>{visibleLogs.length ? <div className="workspace-table-wrap"><table><thead><tr><th>Время</th><th>Название ключа</th><th>Модель</th><th>Транспорт</th><th>Статус</th><th>Списано</th><th>Ошибка</th></tr></thead><tbody>{visibleLogs.map((log, index)=><tr key={`${log.timestamp}-${index}`} data-testid={`row-request-${index}`}><td>{log.timestamp}<br/><span style={{fontSize:8,color:"#9aafb4"}}>23.09.2026</span></td><td>{log.keyName}</td><td>{log.model}</td><td>{log.transport}</td><td><span className={`workspace-status ${log.status === "Ошибка" ? "error" : ""}`}>{log.status}</span></td><td>{log.tokens}</td><td>{log.error}</td></tr>)}</tbody></table></div> : <div className="workspace-empty" data-testid="empty-log-results">По этому фильтру запросов нет. Попробуйте другой ключ или модель.</div>}</section>
