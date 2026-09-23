@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ArrowRight,
   AudioLines,
@@ -126,6 +126,11 @@ function ProviderMark({ provider, size = "md" }: { provider: string; size?: "sm"
 }
 
 export function Dashboard() {
+  useEffect(() => {
+    if (window.location.hash === "#ai-gateway") {
+      document.getElementById("ai-gateway")?.scrollIntoView({ behavior: "instant" });
+    }
+  }, []);
   const [menuOpen, setMenuOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const [language, setLanguage] = useState<"RU" | "EN">("RU");
@@ -495,6 +500,38 @@ export function Dashboard() {
            </section>
 
            <section className="rounded-[32px] bg-[#e5f2f4] px-7 py-12 sm:px-12 sm:py-16"><div className="grid items-end gap-8 lg:grid-cols-[1fr_auto]"><div><div className="mb-4 text-[11px] font-semibold uppercase tracking-[.12em] text-[#5f94a2]">Безопасные и быстрые</div><h2 className="display max-w-[650px] text-[42px] font-extrabold leading-[.98] sm:text-[56px]">«Официальные API.<br/>Без лишнего посредника».</h2><p className="mt-5 max-w-[560px] text-[14px] leading-relaxed text-[#5f7780]">Работаем напрямую с официальными API OpenAI, Anthropic и Google. Запросы идут по защищённому маршруту: мы не читаем содержимое, не добавляем лишние задержки и сохраняем скорость выбранной модели.</p></div><div className="rounded-2xl bg-[#f9fcfc]/85 p-5 lg:min-w-[230px]"><div className="text-[10px] uppercase tracking-[.1em] text-[#6b9aa5]">Как это работает</div><div className="mt-3 text-[21px] font-bold tracking-[-.04em] text-[#264856]">Официальные API</div><div className="text-[12px] text-[#66808a]">OpenAI · Anthropic · Google</div><div className="mt-5 text-[21px] font-bold tracking-[-.04em] text-[#264856]">Без лишних задержек</div><div className="text-[12px] text-[#66808a]">маршрут напрямую к модели</div></div></div></section>
+
+           <section id="ai-gateway" aria-labelledby="gateway-title" className="my-20 scroll-mt-24 overflow-hidden rounded-[32px] border border-[#d2e8eb] bg-gradient-to-br from-[#f1f9fa] via-[#e6f3f5] to-[#d6e9ef] sm:my-28">
+             <div className="grid items-center lg:grid-cols-[1.05fr_.95fr]">
+               <div className="px-7 py-10 sm:px-12 sm:py-14">
+                 <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#b6dce3] bg-white/75 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[.12em] text-[#407789]">
+                   <span className="h-2 w-2 rounded-full bg-[#73b9c5]"/> В планах · ещё не доступно
+                 </div>
+                 <h2 id="gateway-title" className="display max-w-[550px] text-[42px] font-extrabold leading-[.98] text-[#183746] sm:text-[58px]">AI Gateway.<br/>Умный маршрут для каждого запроса.</h2>
+                 <p className="mt-5 max-w-[520px] text-[14px] leading-[1.7] text-[#55727c]">Планируем единый шлюз, который будет выбирать модель под задачу, учитывать стоимость и задержку и переключаться на резервный маршрут при сбое.</p>
+                 <div className="mt-8 grid gap-2 sm:grid-cols-2">
+                   {[
+                     ["Автовыбор модели", "По правилам задачи и доступности"],
+                     ["Фолбэк", "Резервный маршрут при сбое"],
+                     ["Цена и задержка", "Приоритет под ваш сценарий"],
+                     ["Кеширование", "Для подходящих запросов"],
+                     ["Лимиты", "Контроль ключей и бюджета"],
+                     ["Логи", "Причины выбора и расходы"],
+                   ].map(([title, description]) => (
+                     <div key={title} className="rounded-2xl border border-white/85 bg-white/55 px-4 py-3.5">
+                       <div className="text-[12px] font-bold text-[#284f5e]">{title}</div>
+                       <div className="mt-1 text-[11px] leading-relaxed text-[#67848e]">{description}</div>
+                     </div>
+                   ))}
+                 </div>
+                 <p className="mt-6 text-[11px] leading-relaxed text-[#66848e]">Сейчас это концепция продукта, а не работающий API или обещание доступности.</p>
+               </div>
+               <div className="relative h-[310px] overflow-hidden sm:h-[440px] lg:h-full lg:min-h-[560px]">
+                 <img src={`${import.meta.env.BASE_URL}images/ai-gateway-illustration.png`} alt="Абстрактный ледяной шлюз соединяет несколько маршрутов к моделям" loading="lazy" className="h-full w-full object-cover object-center"/>
+                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#d6e9ef]/45 lg:bg-gradient-to-r lg:from-[#e6f3f5]/65 lg:via-transparent lg:to-transparent"/>
+               </div>
+             </div>
+           </section>
         </main>
 
          <footer className="flex flex-wrap items-center justify-between gap-5 border-t border-[#dededb] pt-7 text-[11px] text-[#787876]"><span className="font-semibold text-[#373735]">stratus/hub</span><span>© 2024 Northstar Labs</span><div className="flex gap-5"><Link href="/docs" className="hover:text-black" data-testid="link-footer-docs">Документация</Link><a href="#faq" className="hover:text-black">Статус</a><a href="#faq" className="hover:text-black">Контакты</a></div></footer>

@@ -1,0 +1,30 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "D_gMjS_CDnLVM6WOOlIb1"
+uri = "file://docs/ai-gateway-plan.txt"
+type = "text"
+title = "План AI Gateway"
+description = "Пошаговый план реализации маршрутизации, fallback, кеша, лимитов и логов."
+logical_id = "020db68a-677d-4404-8ef1-16af0849ed6d"
+content_hash = "sha256:abbb101cdea248def8b40767d248bd52cae37780a58bff04859e3035c16e9513"
+size = 9256
+mtime_ms = 1790125115667
+storage_uri = "gcs://replit-rams-assets-sisko/rams/assets/repl:0234d7f2-33d4-4874-9caf-9a17821483ad/020db68a-677d-4404-8ef1-16af0849ed6d/37214c14-627c-46e9-b592-f832d6edd8c1"
+storage_version_token = "1790125298906946"
+content_type = "text/plain"
+
+[[outputs]]
+id = "-WU50H0IfoIpJHv06r0NQ"
+uri = "file://artifacts/stratus-hub/public/images/ai-gateway-illustration.png"
+type = "image"
+title = "Иллюстрация AI Gateway"
+description = "Сгенерированная иллюстрация в ледяной палитре Stratus Hub."
+logical_id = "27bf1cbe-ff37-4de7-97e2-491962742dad"
+content_hash = "sha256:f85e0372a0710b60d0e2e54840a0ea90367cde483170e5c25bc883d2423cc49d"
+size = 1264027
+mtime_ms = 1790125129056
+storage_uri = "gcs://replit-rams-assets-sisko/rams/assets/repl:0234d7f2-33d4-4874-9caf-9a17821483ad/27bf1cbe-ff37-4de7-97e2-491962742dad/4619fd6b-6cde-43b8-8eda-03b690fc8441"
+storage_version_token = "1790125300314816"
+content_type = "image/png"

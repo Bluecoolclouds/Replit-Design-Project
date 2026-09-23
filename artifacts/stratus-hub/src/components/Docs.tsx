@@ -135,7 +135,7 @@ export function Docs() {
                       data-testid={`link-doc-${entry.slug}`}
                     >
                       <span>{entry.title}</span>
-                      <span className="docs-draft-label">{docsArticles[entry.slug] ? 'подготовка' : 'нет статьи'}</span>
+                      {!docsArticles[entry.slug] && <span className="docs-draft-label">нет статьи</span>}
                     </Link>
                   ))}
                 </div>
