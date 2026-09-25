@@ -511,10 +511,10 @@ export function Dashboard() {
              <div className="grid items-center lg:grid-cols-[1.05fr_.95fr]">
                <div className="px-7 py-10 sm:px-12 sm:py-14">
                  <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#b6dce3] bg-white/75 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[.12em] text-[#407789]">
-                   <span className="h-2 w-2 rounded-full bg-[#73b9c5]"/> В планах · ещё не доступно
+                    <span className="h-2 w-2 rounded-full bg-[#73b9c5]"/> AI Gateway доступен
                  </div>
                  <h2 id="gateway-title" className="display max-w-[550px] text-[42px] font-extrabold leading-[.98] text-[#183746] sm:text-[58px]">AI Gateway.<br/>Умный маршрут для каждого запроса.</h2>
-                 <p className="mt-5 max-w-[520px] text-[14px] leading-[1.7] text-[#55727c]">Планируем единый шлюз, который будет выбирать модель под задачу, учитывать стоимость и задержку и переключаться на резервный маршрут при сбое.</p>
+                  <p className="mt-5 max-w-[520px] text-[14px] leading-[1.7] text-[#55727c]">Единый шлюз помогает направлять запросы к подходящим моделям, учитывать стоимость и задержку и переключаться на резервный маршрут при сбое.</p>
                  <div className="mt-8 grid gap-2 sm:grid-cols-2">
                    {[
                      ["Автовыбор модели", "По правилам задачи и доступности"],
@@ -530,7 +530,7 @@ export function Dashboard() {
                      </div>
                    ))}
                  </div>
-                 <p className="mt-6 text-[11px] leading-relaxed text-[#66848e]">Сейчас это концепция продукта, а не работающий API или обещание доступности.</p>
+                  <p className="mt-6 text-[11px] leading-relaxed text-[#66848e]">Доступные маршруты и возможности зависят от настроек вашего workspace.</p>
                </div>
                <div className="relative h-[310px] overflow-hidden sm:h-[440px] lg:h-full lg:min-h-[560px]">
                  <img src={`${import.meta.env.BASE_URL}images/ai-gateway-illustration.png`} alt="Абстрактный ледяной шлюз соединяет несколько маршрутов к моделям" loading="lazy" className="h-full w-full object-cover object-center"/>
