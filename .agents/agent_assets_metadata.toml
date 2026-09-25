@@ -28,3 +28,17 @@ mtime_ms = 1790125129056
 storage_uri = "gcs://replit-rams-assets-sisko/rams/assets/repl:0234d7f2-33d4-4874-9caf-9a17821483ad/27bf1cbe-ff37-4de7-97e2-491962742dad/4619fd6b-6cde-43b8-8eda-03b690fc8441"
 storage_version_token = "1790125300314816"
 content_type = "image/png"
+
+[[outputs]]
+id = "P-eTRQ74b4IetL3VgH9ZB"
+uri = "file://deliverables/stratus-hub-project.zip"
+type = "unspecified"
+title = "Stratus Hub — исходники и дизайн (ZIP)"
+description = "Полный проект для передачи разработчику: сайт, API-заготовка, макеты, библиотеки, изображения и инструкция HANDOFF.md. Без секретов, базы данных и node_modules."
+logical_id = "f5d2caaa-d209-4c45-b962-2b1c41e6023a"
+content_hash = "sha256:567d349bc3c5b8b862cacd6b26e5d0bcb5928ed58412ab175b58598f53a24bdc"
+size = 20485782
+mtime_ms = 1790298919921
+storage_uri = "gcs://replit-rams-assets-sisko/rams/assets/repl:0234d7f2-33d4-4874-9caf-9a17821483ad/f5d2caaa-d209-4c45-b962-2b1c41e6023a/c736dd98-dfbd-4909-a82b-506817e14813"
+storage_version_token = "1790298934480389"
+content_type = "application/octet-stream"
