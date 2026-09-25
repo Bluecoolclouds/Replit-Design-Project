@@ -1,8 +1,10 @@
 .model-prices { min-width:0; }
 .model-prices h2 { margin:6px 0 20px; }
+.model-prices-state { margin:12px 0; color:#698792; font-size:11px; line-height:1.5; }
+.model-prices-state button { margin-left:6px; border:0; border-radius:7px; padding:5px 8px; color:#315d6d; background:#e6f4f6; cursor:pointer; }
 .model-prices-head,.model-prices-row {
   display:grid;
-  grid-template-columns:minmax(0,1fr) 74px 74px;
+  grid-template-columns:minmax(0,1fr) minmax(74px,auto) minmax(74px,auto);
   gap:8px;
   align-items:center;
 }
@@ -24,7 +26,7 @@
 .model-prices-value { text-align:right; white-space:nowrap; color:#305f6e; font-family:var(--app-font-mono,'SFMono-Regular',Consolas,monospace); font-size:12px; font-weight:700; }
 .model-prices-note { margin:14px 0 0; padding:11px 12px; border-radius:10px; background:#edf6f7; color:#698792; font-size:11px; line-height:1.5; }
 @media(max-width:420px) {
-  .model-prices-head,.model-prices-row { grid-template-columns:minmax(0,1fr) 59px 59px; gap:5px; }
+  .model-prices-head,.model-prices-row { grid-template-columns:minmax(0,1fr) minmax(65px,auto) minmax(65px,auto); gap:5px; }
   .model-prices-identity { gap:6px; }
   .model-prices-mark { width:24px; height:24px; }
   .model-prices-identity strong { font-size:11px; }

@@ -1,1 +1,2 @@
 - [Documentation taxonomy versus product support](documentation-taxonomy.md) — reference-site navigation is a planning outline, not evidence that Stratus Hub integrations exist.
+- [Billing and access boundaries](billing-access.md) — use USD prepaid balances and private accounts; do not treat saved keys or demo rates as live inference.

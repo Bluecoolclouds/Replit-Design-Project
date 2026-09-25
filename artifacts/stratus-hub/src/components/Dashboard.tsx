@@ -147,10 +147,8 @@ export function Dashboard() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const [language, setLanguage] = useState<"RU" | "EN">("RU");
-  const [demoOpen, setDemoOpen] = useState(false);
   const [testKey, setTestKey] = useState<string | null>(() => localStorage.getItem("stratus-demo-key"));
   const [registrationOpen, setRegistrationOpen] = useState(false);
-  const [registrationEmail, setRegistrationEmail] = useState("");
   const [activeMode, setActiveMode] = useState<"coding" | "studio" | "chat">("coding");
   const [activePrice, setActivePrice] = useState(0);
   const [activePriceCategory, setActivePriceCategory] = useState<"coding" | "chat" | "studio">("coding");
@@ -173,11 +171,9 @@ export function Dashboard() {
     setTestKey(next);
   };
   const generateTestKey = () => {
-    setRegistrationEmail("");
     setRegistrationOpen(true);
   };
   const completeRegistration = () => {
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(registrationEmail.trim())) return;
     issueTestKey();
     setRegistrationOpen(false);
   };
@@ -186,17 +182,14 @@ export function Dashboard() {
       <div role="dialog" aria-modal="true" aria-labelledby="registration-title" className="w-full max-w-[440px] rounded-[28px] bg-[#f7f7f5] p-7 shadow-2xl">
         <div className="flex items-center justify-between">
           <div>
-            <div className="mb-2 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[.12em] text-[#6b9ead]"><KeyRound size={13}/> Бесплатный тест</div>
-            <h2 id="registration-title" className="display text-2xl font-bold">Создайте аккаунт.</h2>
+            <div className="mb-2 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[.12em] text-[#6b9ead]"><KeyRound size={13}/> Демонстрация</div>
+            <h2 id="registration-title" className="display text-2xl font-bold">Пример API-ключа</h2>
           </div>
           <button aria-label="Закрыть регистрацию" onClick={() => setRegistrationOpen(false)}><X size={18}/></button>
         </div>
-        <p className="mt-3 text-sm leading-relaxed text-[#6d6d6a]">Оставьте email — после регистрации мы сразу выдадим тестовый API-ключ на 10 000 токенов.</p>
-        <label className="mt-6 block text-[11px] font-semibold text-[#555]">Рабочий email
-          <input autoFocus type="email" value={registrationEmail} onChange={(event) => setRegistrationEmail(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") completeRegistration(); }} className="mt-2 w-full rounded-xl border border-[#d4d4d0] bg-white px-4 py-3 text-sm outline-none focus:border-[#73aabd]" placeholder="you@company.com"/>
-        </label>
-        <button disabled={!registrationEmail.trim()} onClick={completeRegistration} className="mt-4 w-full rounded-full bg-[#292929] py-3 text-sm font-semibold text-white transition hover:bg-[#454545] disabled:cursor-not-allowed disabled:opacity-40">Получить тестовый ключ <ArrowRight className="ml-2 inline" size={14}/></button>
-        <div className="mt-4 text-center text-[10px] text-[#858580]">Без карты · ключ появится сразу после регистрации</div>
+        <p className="mt-3 text-sm leading-relaxed text-[#6d6d6a]">Это только иллюстрация формата. Демо-ключ не создаёт аккаунт, не даёт токенов и не работает с API моделей. Для личного кабинета зарегистрируйтесь отдельно.</p>
+        <button onClick={completeRegistration} className="mt-4 w-full rounded-full bg-[#292929] py-3 text-sm font-semibold text-white transition hover:bg-[#454545]">Показать демо-ключ <ArrowRight className="ml-2 inline" size={14}/></button>
+        <Link href="/sign-up" className="mt-4 block text-center text-xs text-[#527783]">Перейти к регистрации</Link>
       </div>
     </div>
   ) : null;
@@ -216,11 +209,12 @@ export function Dashboard() {
           <div className="flex items-center gap-2">
             <button className="hidden items-center gap-1 rounded-full bg-[#dededc] px-3 py-2 text-[10px] font-semibold sm:flex" onClick={() => setLanguage(language === "RU" ? "EN" : "RU")}><Globe2 size={13}/>{language}</button>
             <button aria-label="Переключить тему" className="grid h-8 w-8 place-items-center rounded-full bg-[#dededc] text-[#343434] hover:bg-[#d4d4d1]"><Moon size={14}/></button>
-             <Link href="/dashboard" data-testid="link-open-dashboard" className="pill hidden rounded-full bg-[#292929] px-4 py-2.5 text-[11px] font-semibold text-white sm:block">Открыть dashboard <ArrowRight className="ml-2 inline" size={13}/></Link>
+            <Link href="/sign-in" data-testid="link-sign-in" className="rounded-full px-3 py-2.5 text-[11px] font-semibold text-[#424242]">Войти</Link>
+             <Link href="/sign-up" data-testid="link-sign-up" className="pill hidden rounded-full bg-[#292929] px-4 py-2.5 text-[11px] font-semibold text-white sm:block">Создать аккаунт <ArrowRight className="ml-2 inline" size={13}/></Link>
             <button aria-label="Открыть меню" className="grid h-8 w-8 place-items-center rounded-full bg-[#dededc] lg:hidden" onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? <X size={15}/> : <Menu size={15}/>}</button>
           </div>
         </header>
-        {menuOpen && <div className="mt-2 rounded-3xl bg-[#e9e9e7] p-4 lg:hidden">{navItems.map((item) => <a className="block border-b border-[#d4d4d1] py-3 text-sm last:border-0" href={`#${item.target}`} key={item.target} onClick={() => setMenuOpen(false)}>{item.label}</a>)}</div>}
+        {menuOpen && <div className="mt-2 rounded-3xl bg-[#e9e9e7] p-4 lg:hidden">{navItems.map((item) => <a className="block border-b border-[#d4d4d1] py-3 text-sm last:border-0" href={`#${item.target}`} key={item.target} onClick={() => setMenuOpen(false)}>{item.label}</a>)}<Link href="/sign-in" className="block border-b border-[#d4d4d1] py-3 text-sm">Войти</Link><Link href="/sign-up" className="block py-3 text-sm">Создать аккаунт</Link></div>}
 
         <main>
           <section className="grid items-center gap-12 pb-16 pt-20 sm:pt-28 lg:grid-cols-[.93fr_1.07fr] lg:gap-20 lg:pb-24">
@@ -229,8 +223,8 @@ export function Dashboard() {
                <h1 className="display max-w-[620px] text-[58px] font-extrabold leading-[.94] sm:text-[78px]">Прокси хаб<br/><span className="ice-accent">для всех</span> моделей.</h1>
                <p className="mt-7 max-w-[460px] text-[17px] leading-[1.55] text-[#666]">Единый API-прокси для OpenAI, Anthropic, Google и других. Один ключ для сотен моделей — выбирай маршрут и плати только за использованные токены.</p>
               <div className="mt-8 flex flex-wrap items-center gap-5">
-             <button onClick={() => setDemoOpen(true)} className="pill ice-primary rounded-full px-5 py-3.5 text-[13px]">Начать бесплатно <ArrowRight className="ml-2 inline" size={15}/></button>
-                 <a href="#модели" className="text-[13px] font-medium underline decoration-[#aaa] underline-offset-4 hover:decoration-black">Цены <ArrowRight className="ml-1 inline" size={13}/></a>
+             <Link href="/sign-up" className="pill ice-primary rounded-full px-5 py-3.5 text-[13px]">Создать аккаунт <ArrowRight className="ml-2 inline" size={15}/></Link>
+                <a href="#тарифы" className="text-[13px] font-medium underline decoration-[#aaa] underline-offset-4 hover:decoration-black">Тарифы <ArrowRight className="ml-1 inline" size={13}/></a>
               </div>
               <div className="mt-9 flex items-center gap-2 text-[11px] text-[#858585]"><ShieldCheck size={14} className="text-[#72aeb8]"/> Без кредитной карты · 10k запросов в месяц</div>
             </div>
@@ -272,7 +266,7 @@ export function Dashboard() {
             ))}
           </section>
 
-           <section id="решения" className="scroll-mt-24 py-20 sm:py-28">
+          <section id="решения" className="py-20 sm:py-28">
             <div className="flex flex-wrap items-end justify-between gap-6">
               <div><div className="mb-4 flex items-center gap-2 text-[11px] font-medium text-[#767676]"><Layers3 size={14} className="text-[#73aabd]" /> Решения для продукта</div><h2 className="display max-w-[570px] text-[43px] font-extrabold leading-[.98] sm:text-[58px]">Один шлюз для всей AI-логики.</h2></div>
               <p className="max-w-[250px] text-[13px] leading-relaxed text-[#747472]">Выбери сценарий — мы уже подготовили нужный маршрут, модель и контроль расходов.</p>
@@ -294,39 +288,52 @@ export function Dashboard() {
             </div>
           </section>
 
-            <section id="ai-gateway" aria-labelledby="gateway-title" className="my-20 scroll-mt-24 overflow-hidden rounded-[32px] border border-[#d2e8eb] bg-gradient-to-br from-[#f1f9fa] via-[#e6f3f5] to-[#d6e9ef] sm:my-28">
-              <div className="grid items-center lg:grid-cols-[1.05fr_.95fr]">
-                <div className="px-7 py-10 sm:px-12 sm:py-14">
-                  <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#b6dce3] bg-white/75 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[.12em] text-[#407789]">
-                     <span className="h-2 w-2 rounded-full bg-[#73b9c5]"/> AI Gateway доступен
-                  </div>
-                  <h2 id="gateway-title" className="display max-w-[550px] text-[42px] font-extrabold leading-[.98] text-[#183746] sm:text-[58px]">AI Gateway.<br/>Умный маршрут для каждого запроса.</h2>
-                   <p className="mt-5 max-w-[520px] text-[14px] leading-[1.7] text-[#55727c]">Единый шлюз помогает направлять запросы к подходящим моделям, учитывать стоимость и задержку и переключаться на резервный маршрут при сбое.</p>
-                  <div className="mt-8 grid gap-2 sm:grid-cols-2">
+           <section id="продукт" className="border-y border-[#dededb] py-20 sm:py-28">
+             <div className="grid gap-12 lg:grid-cols-[.78fr_1.22fr] lg:gap-20">
+               <div>
+                 <div className="mb-4 flex items-center gap-2 text-[11px] font-medium text-[#767676]"><Sparkles size={14} className="text-[#73aabd]"/> Один слой для всего</div>
+                 <h2 className="display max-w-[490px] text-[43px] font-extrabold leading-[.98] sm:text-[58px]">От идеи<br/>до готового медиа.</h2>
+                 <p className="mt-6 max-w-[390px] text-[15px] leading-[1.6] text-[#6c6c6a]">Изображения, видео, музыка, озвучка и понимание файлов — в одном потоке.</p>
+                 <div className="mt-8 flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[.12em] text-[#6b9ead]"><span className="h-2 w-2 rounded-full bg-[#8acbd4]"/> Один workspace · четыре типа контента</div>
+               </div>
+               <div className="relative">
+                 <div className="absolute left-[17px] top-7 bottom-7 w-px bg-[#d5e8eb] sm:left-[21px]"/>
+                 <div className="relative space-y-3">
                     {[
-                      ["Автовыбор модели", "По правилам задачи и доступности"],
-                      ["Фолбэк", "Резервный маршрут при сбое"],
-                      ["Цена и задержка", "Приоритет под ваш сценарий"],
-                      ["Кеширование", "Для подходящих запросов"],
-                      ["Лимиты", "Контроль ключей и бюджета"],
-                      ["Логи", "Причины выбора и расходы"],
-                    ].map(([title, description]) => (
-                      <div key={title} className="rounded-2xl border border-white/85 bg-white/55 px-4 py-3.5">
-                        <div className="text-[12px] font-bold text-[#284f5e]">{title}</div>
-                        <div className="mt-1 text-[11px] leading-relaxed text-[#67848e]">{description}</div>
-                      </div>
-                    ))}
-                  </div>
-                   <p className="mt-6 text-[11px] leading-relaxed text-[#66848e]">Доступные маршруты и возможности зависят от настроек вашего workspace.</p>
-                </div>
-                <div className="relative h-[310px] overflow-hidden sm:h-[440px] lg:h-full lg:min-h-[560px]">
-                  <img src={`${import.meta.env.BASE_URL}images/ai-gateway-illustration.png`} alt="Абстрактный ледяной шлюз соединяет несколько маршрутов к моделям" loading="lazy" className="h-full w-full object-cover object-center"/>
-                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#d6e9ef]/45 lg:bg-gradient-to-r lg:from-[#e6f3f5]/65 lg:via-transparent lg:to-transparent"/>
-                </div>
-              </div>
-            </section>
+                      { step: "01", icon: ImageIcon, kicker: "Пример изображения, созданного AI", type: "AIIMAGE · 02", title: "Изображения", models: "GPT Image · Gemini · Flux", image: "ai-proxy-case-media.png" },
+                      { step: "02", icon: Video, kicker: "VIDEO · 02", type: "Видео", title: "Видео", models: "Veo · Kling · Seedance" },
+                      { step: "03", icon: AudioLines, kicker: "Аудио 02", type: "03:45", title: "Музыка и аудио", models: "Suno · ElevenLabs" },
+                      { step: "04", icon: FileText, kicker: "report.pdf", type: "24.6 MB", title: "Понимание файлов", models: "PDF · DOCX · Audio · Video" },
+                    ].map(({ step, icon: Icon, kicker, type, title, models, image }) => (
+                     <div key={title} className="media-step group relative flex items-center gap-4 rounded-[24px] border border-[#dededb] bg-[#f1f1ee] p-3 transition hover:border-[#bfdde3] hover:bg-[#edf4f5] sm:gap-5 sm:p-4">
+                       <div className="media-pulse relative z-10 grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-[#dcebe1] text-[#5c866e] sm:h-11 sm:w-11"><Icon size={18} strokeWidth={1.7}/></div>
+                       <div className="min-w-0 flex-1 py-1">
+                          <div className="flex flex-wrap items-center gap-2 text-[9px] font-semibold uppercase tracking-[.1em] text-[#6b9ead]"><span>Шаг {step}</span><span className="text-[#aaa]">·</span><span>{kicker}</span><span className="text-[#aaa]">·</span><span className="text-[#90908b]">{type}</span></div>
+                         <div className="mt-1 text-[16px] font-bold tracking-[-.03em]">{title}</div>
+                         <div className="mt-1 text-[11px] text-[#777773]">{models}</div>
+                       </div>
+                       {image ? <img src={`${import.meta.env.BASE_URL}images/${image}`} alt="" className="hidden h-[70px] w-[94px] rounded-xl object-cover opacity-90 sm:block"/> : <div className="hidden h-[70px] w-[94px] rounded-xl bg-[#e6f0f2] sm:block"><div className="m-3 h-1 rounded-full bg-[#9dc8d0]"/><div className="m-3 mt-2 h-1 w-2/3 rounded-full bg-[#c7dfe3]"/><div className="m-3 mt-2 h-1 w-1/2 rounded-full bg-[#c7dfe3]"/></div>}
+                     </div>
+                   ))}
+                 </div>
+               </div>
+             </div>
+           </section>
+           <section id="faq" className="border-t border-[#dededb] py-20 sm:py-28">
+             <div className="grid gap-10 lg:grid-cols-[.7fr_1.3fr]">
+               <div><div className="mb-4 text-[11px] font-semibold uppercase tracking-[.12em] text-[#6b9ead]">FAQ</div><h2 className="display text-[43px] font-extrabold leading-[.98] sm:text-[58px]">Спокойно<br/>о важном.</h2><p className="mt-5 max-w-[300px] text-[13px] leading-relaxed text-[#747472]">Короткие ответы о маршрутизации, данных и тестовом доступе.</p></div>
+               <div className="space-y-2">
+                 {[
+                   ["Это официальный доступ к моделям?", "Да. Stratus Hub маршрутизирует запросы к официальным API провайдеров и не заменяет их аккаунты."],
+                   ["Что происходит с данными?", "Мы не используем содержимое запросов для обучения. Для продакшена доступны отдельные лимиты и журналы доступа."],
+                   ["Тестовый ключ настоящий?", "Нет. Это демонстрационный ключ для знакомства с интерфейсом и форматом интеграции. Провайдерский аккаунт не создаётся."],
+                   ["Как начать интеграцию?", "Используйте OpenAI-compatible endpoint из блока быстрого старта. Один ключ, единый баланс и понятный роутинг."]
+                 ].map(([question, answer], index) => <details key={question} open={index === 0} className="group rounded-[20px] border border-[#dededb] bg-[#f1f1ee] px-5 py-4"><summary className="flex cursor-pointer list-none items-center justify-between text-[14px] font-bold">{question}<span className="text-[#6b9ead] transition group-open:rotate-45 text-xl">+</span></summary><p className="max-w-[600px] pt-3 text-[13px] leading-relaxed text-[#6c6c6a]">{answer}</p></details>)}
+               </div>
+             </div>
+           </section>
 
-             <section id="как-работать" className="scroll-mt-24 border-b border-[#dededb] py-20 sm:py-28">
+            <section id="как-работать" className="border-b border-[#dededb] py-20 sm:py-28">
               <div className="flex flex-wrap items-end justify-between gap-6">
                 <div>
                   <div className="mb-4 text-[11px] font-semibold uppercase tracking-[.12em] text-[#6b9ead]">Как работать</div>
@@ -367,39 +374,7 @@ export function Dashboard() {
               </div>
             </section>
 
-           <section id="продукт" className="scroll-mt-24 border-y border-[#dededb] py-20 sm:py-28">
-              <div className="grid gap-12 lg:grid-cols-[.78fr_1.22fr] lg:gap-20">
-                <div>
-                  <div className="mb-4 flex items-center gap-2 text-[11px] font-medium text-[#767676]"><Sparkles size={14} className="text-[#73aabd]"/> Один слой для всего</div>
-                  <h2 className="display max-w-[490px] text-[43px] font-extrabold leading-[.98] sm:text-[58px]">От идеи<br/>до готового медиа.</h2>
-                  <p className="mt-6 max-w-[390px] text-[15px] leading-[1.6] text-[#6c6c6a]">Изображения, видео, музыка, озвучка и понимание файлов — в одном потоке.</p>
-                  <div className="mt-8 flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[.12em] text-[#6b9ead]"><span className="h-2 w-2 rounded-full bg-[#8acbd4]"/> Один workspace · четыре типа контента</div>
-                </div>
-                <div className="relative">
-                  <div className="absolute left-[17px] top-7 bottom-7 w-px bg-[#d5e8eb] sm:left-[21px]"/>
-                  <div className="relative space-y-3">
-                     {[
-                       { step: "01", icon: ImageIcon, kicker: "Пример изображения, созданного AI", type: "AIIMAGE · 02", title: "Изображения", models: "GPT Image · Gemini · Flux", image: "ai-proxy-case-media.png" },
-                       { step: "02", icon: Video, kicker: "VIDEO · 02", type: "Видео", title: "Видео", models: "Veo · Kling · Seedance" },
-                       { step: "03", icon: AudioLines, kicker: "Аудио 02", type: "03:45", title: "Музыка и аудио", models: "Suno · ElevenLabs" },
-                       { step: "04", icon: FileText, kicker: "report.pdf", type: "24.6 MB", title: "Понимание файлов", models: "PDF · DOCX · Audio · Video" },
-                     ].map(({ step, icon: Icon, kicker, type, title, models, image }) => (
-                      <div key={title} className="media-step group relative flex items-center gap-4 rounded-[24px] border border-[#dededb] bg-[#f1f1ee] p-3 transition hover:border-[#bfdde3] hover:bg-[#edf4f5] sm:gap-5 sm:p-4">
-                        <div className="media-pulse relative z-10 grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-[#dcebe1] text-[#5c866e] sm:h-11 sm:w-11"><Icon size={18} strokeWidth={1.7}/></div>
-                        <div className="min-w-0 flex-1 py-1">
-                           <div className="flex flex-wrap items-center gap-2 text-[9px] font-semibold uppercase tracking-[.1em] text-[#6b9ead]"><span>Шаг {step}</span><span className="text-[#aaa]">·</span><span>{kicker}</span><span className="text-[#aaa]">·</span><span className="text-[#90908b]">{type}</span></div>
-                          <div className="mt-1 text-[16px] font-bold tracking-[-.03em]">{title}</div>
-                          <div className="mt-1 text-[11px] text-[#777773]">{models}</div>
-                        </div>
-                        {image ? <img src={`${import.meta.env.BASE_URL}images/${image}`} alt="" className="hidden h-[70px] w-[94px] rounded-xl object-cover opacity-90 sm:block"/> : <div className="hidden h-[70px] w-[94px] rounded-xl bg-[#e6f0f2] sm:block"><div className="m-3 h-1 rounded-full bg-[#9dc8d0]"/><div className="m-3 mt-2 h-1 w-2/3 rounded-full bg-[#c7dfe3]"/><div className="m-3 mt-2 h-1 w-1/2 rounded-full bg-[#c7dfe3]"/></div>}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </section>
-
-             <section id="модели" className="scroll-mt-24 border-b border-[#dededb] py-20 sm:py-28">
+             <section id="модели" className="border-b border-[#dededb] py-20 sm:py-28">
               <div className="flex flex-wrap items-end justify-between gap-8">
                 <div>
                    <div className="mb-4 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[.12em] text-[#6b9ead]"><Zap size={14}/> Актуальные цены</div>
@@ -466,12 +441,7 @@ export function Dashboard() {
               </div>
             </section>
 
-            <section id="возможности" className="scroll-mt-24 grid items-center gap-12 rounded-[32px] bg-[#292929] px-7 py-10 text-white sm:px-12 sm:py-14 lg:grid-cols-[1fr_1fr]">
-              <div><div className="mb-4 flex items-center gap-2 text-[11px] text-[#bdbdb8]"><CircleHelp size={14} className="text-[#9fc8b4]"/> API, который не мешает</div><h2 className="display max-w-[460px] text-[42px] font-extrabold leading-[.98] sm:text-[55px]">Меньше инфраструктуры. Больше продукта.</h2><p className="mt-6 max-w-[420px] text-[14px] leading-relaxed text-[#aaa9a5]">stratus/hub берёт на себя ключи, лимиты, фолбэки и наблюдаемость. Ты строишь продукт — мы держим шлюз.</p><button onClick={generateTestKey} className="mt-7 rounded-full bg-[#f3f3f0] px-4 py-3 text-[12px] font-semibold text-[#252525]">{testKey ? <Check className="mr-2 inline text-[#6f9c84]" size={14}/> : <KeyRound className="mr-2 inline" size={14}/>} {testKey ? "API-ключ создан" : "Создать API-ключ"}</button></div>
-             <div className="rounded-[23px] bg-[#363635] p-5 font-mono text-[11px] leading-[2] text-[#b6b6b1] shadow-2xl"><div className="mb-4 flex items-center gap-2 text-[10px] text-[#83837e]"><span className="h-2 w-2 rounded-full bg-[#df7770]"/><span className="h-2 w-2 rounded-full bg-[#d6ae6f]"/><span className="h-2 w-2 rounded-full bg-[#81b99b]"/><span className="ml-auto">request.ts</span></div><div><span className="text-[#9dbda9]">const</span> response = <span className="text-[#d9be8d]">await</span> hub.chat.completions.create({"{"}</div><div className="pl-4">model: <span className="text-[#b8ce9b]">&quot;auto / balanced&quot;</span>,</div><div className="pl-4">messages: messages,</div><div className="pl-4">stream: <span className="text-[#b8ce9b]">true</span></div><div>{"}"}</div><div className="mt-4 text-[#83b59d]">✓ routed to claude-3-5-sonnet · 412ms</div></div>
-           </section>
-
-           <section id="кейсы" className="scroll-mt-24 border-t border-[#dededb] py-20 sm:py-28">
+           <section id="кейсы" className="border-t border-[#dededb] py-20 sm:py-28">
              <div className="flex flex-wrap items-end justify-between gap-6">
                <div>
                  <div className="mb-4 flex items-center gap-2 text-[11px] font-medium text-[#767676]"><Sparkles size={14} className="text-[#7ea68f}"/> Истории команд</div>
@@ -504,54 +474,75 @@ export function Dashboard() {
              </div>
            </section>
 
+           <section id="возможности" className="grid items-center gap-12 rounded-[32px] bg-[#292929] px-7 py-10 text-white sm:px-12 sm:py-14 lg:grid-cols-[1fr_1fr]">
+             <div><div className="mb-4 flex items-center gap-2 text-[11px] text-[#bdbdb8]"><CircleHelp size={14} className="text-[#9fc8b4]"/> Иллюстрация API</div><h2 className="display max-w-[460px] text-[42px] font-extrabold leading-[.98] sm:text-[55px]">Меньше инфраструктуры. Больше продукта.</h2><p className="mt-6 max-w-[420px] text-[14px] leading-relaxed text-[#aaa9a5]">Кабинет хранит ключи и баланс. Подключение моделей, лимиты и фолбэки пока не работают.</p><button onClick={generateTestKey} className="mt-7 rounded-full bg-[#f3f3f0] px-4 py-3 text-[12px] font-semibold text-[#252525]">{testKey ? <Check className="mr-2 inline text-[#6f9c84]" size={14}/> : <KeyRound className="mr-2 inline" size={14}/>} {testKey ? "Демо-ключ показан" : "Посмотреть демо-ключ"}</button></div>
+            <div className="rounded-[23px] bg-[#363635] p-5 font-mono text-[11px] leading-[2] text-[#b6b6b1] shadow-2xl"><div className="mb-4 flex items-center gap-2 text-[10px] text-[#83837e]"><span className="h-2 w-2 rounded-full bg-[#df7770]"/><span className="h-2 w-2 rounded-full bg-[#d6ae6f]"/><span className="h-2 w-2 rounded-full bg-[#81b99b]"/><span className="ml-auto">request.ts</span></div><div><span className="text-[#9dbda9]">const</span> response = <span className="text-[#d9be8d]">await</span> hub.chat.completions.create({"{"}</div><div className="pl-4">model: <span className="text-[#b8ce9b]">&quot;auto / balanced&quot;</span>,</div><div className="pl-4">messages: messages,</div><div className="pl-4">stream: <span className="text-[#b8ce9b]">true</span></div><div>{"}"}</div><div className="mt-4 text-[#83b59d]">✓ routed to claude-3-5-sonnet · 412ms</div></div>
+          </section>
+
+           <section id="тест" className="my-20 overflow-hidden rounded-[32px] border border-[#cfe4e8] bg-[#e6f3f5] px-7 py-10 sm:my-28 sm:px-12 sm:py-14">
+             <div className="grid items-center gap-10 lg:grid-cols-[.9fr_1.1fr]">
+               <div>
+                  <div className="mb-4 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[.12em] text-[#648e9c]"><KeyRound size={14}/> Демо-ключ · не для реальных запросов</div>
+                 <h2 className="display max-w-[510px] text-[43px] font-extrabold leading-[.98] sm:text-[58px]">Протестируйте сейчас.</h2>
+                   <p className="mt-5 max-w-[460px] text-[14px] leading-relaxed text-[#617d89]">Посмотрите формат ключа и пример интеграции. Этот демонстрационный ключ не авторизует API-запросы и не подключён к inference. Чтобы создать настоящий ключ аккаунта, зарегистрируйтесь.</p>
+                 <div className="mt-7 flex flex-wrap items-center gap-4">
+                    <button onClick={generateTestKey} className="pill rounded-full bg-[#292929] px-5 py-3.5 text-[13px] font-semibold text-white">{testKey ? "Сгенерировать демо-ключ заново" : "Показать демо-ключ"} <KeyRound className="ml-2 inline" size={14}/></button>
+                    <span className="text-[11px] text-[#69808a]">без карты · 60 секунд</span>
+                 </div>
+               </div>
+               <div className="rounded-[24px] bg-[#f7f7f5]/90 p-5 shadow-[0_18px_50px_rgba(85,110,95,.12)] sm:p-6">
+                  <div className="mb-4 flex items-center justify-between text-[10px] font-semibold uppercase tracking-[.12em] text-[#8b9fa6]"><span>Быстрый старт</span><span className="rounded-full bg-[#dceff2] px-2 py-1 text-[#648e9c]">openai compatible</span></div>
+                 <div className="rounded-2xl bg-[#292929] p-4 font-mono text-[11px] leading-[1.8] text-[#c4c8c3]">
+                   <div><span className="text-[#9dbda9]">curl</span> https://api.stratushub.dev/v1/chat/completions \</div>
+                   <div className="pl-4">-H <span className="text-[#d9be8d]">&quot;Authorization: Bearer {testKey ?? "sk_test_••••••••"}&quot;</span> \</div>
+                   <div className="pl-4">-d <span className="text-[#b8ce9b]">&apos;{"{\"model\":\"auto\",\"messages\":[...]}"}&apos;</span></div>
+                 </div>
+                 <div className="mt-4 flex flex-wrap gap-3">
+                    <button onClick={() => { if (!testKey) generateTestKey(); }} className="flex-1 rounded-full border border-[#cfe4e8] px-4 py-3 text-[12px] font-semibold text-[#52788a] hover:bg-[#e6f3f5]"><Terminal className="mr-2 inline" size={14}/> {testKey ? "Ключ готов" : "Показать API-ключ"}</button>
+                    <button onClick={copy} className="rounded-full bg-[#dceff2] px-4 py-3 text-[12px] font-semibold text-[#52788a] hover:bg-[#cfe4e8]"><Copy className="mr-2 inline" size={14}/> {copied ? "Скопировано" : "Копировать"}</button>
+                 </div>
+                  <Link href="/sign-up" className="mt-3 block rounded-full bg-[#292929] py-3 text-center text-[12px] font-semibold text-white transition hover:bg-[#454545]">Зарегистрироваться и продолжить <ArrowRight className="ml-2 inline" size={13}/></Link>
+               </div>
+             </div>
+           </section>
+
            <section className="rounded-[32px] bg-[#e5f2f4] px-7 py-12 sm:px-12 sm:py-16"><div className="grid items-end gap-8 lg:grid-cols-[1fr_auto]"><div><div className="mb-4 text-[11px] font-semibold uppercase tracking-[.12em] text-[#5f94a2]">Безопасные и быстрые</div><h2 className="display max-w-[650px] text-[42px] font-extrabold leading-[.98] sm:text-[56px]">«Официальные API.<br/>Без лишнего посредника».</h2><p className="mt-5 max-w-[560px] text-[14px] leading-relaxed text-[#5f7780]">Работаем напрямую с официальными API OpenAI, Anthropic и Google. Запросы идут по защищённому маршруту: мы не читаем содержимое, не добавляем лишние задержки и сохраняем скорость выбранной модели.</p></div><div className="rounded-2xl bg-[#f9fcfc]/85 p-5 lg:min-w-[230px]"><div className="text-[10px] uppercase tracking-[.1em] text-[#6b9aa5]">Как это работает</div><div className="mt-3 text-[21px] font-bold tracking-[-.04em] text-[#264856]">Официальные API</div><div className="text-[12px] text-[#66808a]">OpenAI · Anthropic · Google</div><div className="mt-5 text-[21px] font-bold tracking-[-.04em] text-[#264856]">Без лишних задержек</div><div className="text-[12px] text-[#66808a]">маршрут напрямую к модели</div></div></div></section>
 
-            <section id="faq" className="scroll-mt-24 border-t border-[#dededb] py-20 sm:py-28">
-              <div className="grid gap-10 lg:grid-cols-[.7fr_1.3fr]">
-                <div><div className="mb-4 text-[11px] font-semibold uppercase tracking-[.12em] text-[#6b9ead]">FAQ</div><h2 className="display text-[43px] font-extrabold leading-[.98] sm:text-[58px]">Спокойно<br/>о важном.</h2><p className="mt-5 max-w-[300px] text-[13px] leading-relaxed text-[#747472]">Короткие ответы о маршрутизации, данных и тестовом доступе.</p></div>
-                <div className="space-y-2">
-                  {[
-                    ["Это официальный доступ к моделям?", "Да. Stratus Hub маршрутизирует запросы к официальным API провайдеров и не заменяет их аккаунты."],
-                    ["Что происходит с данными?", "Мы не используем содержимое запросов для обучения. Для продакшена доступны отдельные лимиты и журналы доступа."],
-                    ["Тестовый ключ настоящий?", "Нет. Это демонстрационный ключ для знакомства с интерфейсом и форматом интеграции. Провайдерский аккаунт не создаётся."],
-                    ["Как начать интеграцию?", "Используйте OpenAI-compatible endpoint из блока быстрого старта. Один ключ, единый баланс и понятный роутинг."]
-                  ].map(([question, answer], index) => <details key={question} open={index === 0} className="group rounded-[20px] border border-[#dededb] bg-[#f1f1ee] px-5 py-4"><summary className="flex cursor-pointer list-none items-center justify-between text-[14px] font-bold">{question}<span className="text-[#6b9ead] transition group-open:rotate-45 text-xl">+</span></summary><p className="max-w-[600px] pt-3 text-[13px] leading-relaxed text-[#6c6c6a]">{answer}</p></details>)}
-                </div>
-              </div>
-            </section>
-
-            <section id="тест" className="my-20 scroll-mt-24 overflow-hidden rounded-[32px] border border-[#cfe4e8] bg-[#e6f3f5] px-7 py-10 sm:my-28 sm:px-12 sm:py-14">
-              <div className="grid items-center gap-10 lg:grid-cols-[.9fr_1.1fr]">
-                <div>
-                  <div className="mb-4 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[.12em] text-[#648e9c]"><KeyRound size={14}/> Бесплатный тестовый ключ</div>
-                  <h2 className="display max-w-[510px] text-[43px] font-extrabold leading-[.98] sm:text-[58px]">Протестируйте сейчас.</h2>
-                   <p className="mt-5 max-w-[460px] text-[14px] leading-relaxed text-[#617d89]">Получите тестовый ключ, отправьте первый запрос и проверьте маршрутизацию до регистрации. 10 000 токенов — бесплатно.</p>
-                  <div className="mt-7 flex flex-wrap items-center gap-4">
-                    <button onClick={generateTestKey} className="pill rounded-full bg-[#292929] px-5 py-3.5 text-[13px] font-semibold text-white">{testKey ? "Сгенерировать заново" : "Сгенерировать ключ"} <KeyRound className="ml-2 inline" size={14}/></button>
-                     <span className="text-[11px] text-[#69808a]">без карты · 60 секунд</span>
-                  </div>
-                </div>
-                <div className="rounded-[24px] bg-[#f7f7f5]/90 p-5 shadow-[0_18px_50px_rgba(85,110,95,.12)] sm:p-6">
-                   <div className="mb-4 flex items-center justify-between text-[10px] font-semibold uppercase tracking-[.12em] text-[#8b9fa6]"><span>Быстрый старт</span><span className="rounded-full bg-[#dceff2] px-2 py-1 text-[#648e9c]">openai compatible</span></div>
-                  <div className="rounded-2xl bg-[#292929] p-4 font-mono text-[11px] leading-[1.8] text-[#c4c8c3]">
-                    <div><span className="text-[#9dbda9]">curl</span> https://api.stratushub.dev/v1/chat/completions \</div>
-                    <div className="pl-4">-H <span className="text-[#d9be8d]">&quot;Authorization: Bearer {testKey ?? "sk_test_••••••••"}&quot;</span> \</div>
-                    <div className="pl-4">-d <span className="text-[#b8ce9b]">&apos;{"{\"model\":\"auto\",\"messages\":[...]}"}&apos;</span></div>
-                  </div>
-                  <div className="mt-4 flex flex-wrap gap-3">
-                     <button onClick={() => { if (!testKey) generateTestKey(); }} className="flex-1 rounded-full border border-[#cfe4e8] px-4 py-3 text-[12px] font-semibold text-[#52788a] hover:bg-[#e6f3f5]"><Terminal className="mr-2 inline" size={14}/> {testKey ? "Ключ готов" : "Показать API-ключ"}</button>
-                     <button onClick={copy} className="rounded-full bg-[#dceff2] px-4 py-3 text-[12px] font-semibold text-[#52788a] hover:bg-[#cfe4e8]"><Copy className="mr-2 inline" size={14}/> {copied ? "Скопировано" : "Копировать"}</button>
-                  </div>
-                  <a href="/register" className="mt-3 block rounded-full bg-[#292929] py-3 text-center text-[12px] font-semibold text-white transition hover:bg-[#454545]">Зарегистрироваться и продолжить <ArrowRight className="ml-2 inline" size={13}/></a>
-                </div>
-              </div>
-            </section>
-
+           <section id="ai-gateway" aria-labelledby="gateway-title" className="my-20 scroll-mt-24 overflow-hidden rounded-[32px] border border-[#d2e8eb] bg-gradient-to-br from-[#f1f9fa] via-[#e6f3f5] to-[#d6e9ef] sm:my-28">
+             <div className="grid items-center lg:grid-cols-[1.05fr_.95fr]">
+               <div className="px-7 py-10 sm:px-12 sm:py-14">
+                 <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#b6dce3] bg-white/75 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[.12em] text-[#407789]">
+                    <span className="h-2 w-2 rounded-full bg-[#73b9c5]"/> AI Gateway доступен
+                 </div>
+                 <h2 id="gateway-title" className="display max-w-[550px] text-[42px] font-extrabold leading-[.98] text-[#183746] sm:text-[58px]">AI Gateway.<br/>Умный маршрут для каждого запроса.</h2>
+                  <p className="mt-5 max-w-[520px] text-[14px] leading-[1.7] text-[#55727c]">Единый шлюз помогает направлять запросы к подходящим моделям, учитывать стоимость и задержку и переключаться на резервный маршрут при сбое.</p>
+                 <div className="mt-8 grid gap-2 sm:grid-cols-2">
+                   {[
+                     ["Автовыбор модели", "По правилам задачи и доступности"],
+                     ["Фолбэк", "Резервный маршрут при сбое"],
+                     ["Цена и задержка", "Приоритет под ваш сценарий"],
+                     ["Кеширование", "Для подходящих запросов"],
+                     ["Лимиты", "Контроль ключей и бюджета"],
+                     ["Логи", "Причины выбора и расходы"],
+                   ].map(([title, description]) => (
+                     <div key={title} className="rounded-2xl border border-white/85 bg-white/55 px-4 py-3.5">
+                       <div className="text-[12px] font-bold text-[#284f5e]">{title}</div>
+                       <div className="mt-1 text-[11px] leading-relaxed text-[#67848e]">{description}</div>
+                     </div>
+                   ))}
+                 </div>
+                  <p className="mt-6 text-[11px] leading-relaxed text-[#66848e]">Доступные маршруты и возможности зависят от настроек вашего workspace.</p>
+               </div>
+               <div className="relative h-[310px] overflow-hidden sm:h-[440px] lg:h-full lg:min-h-[560px]">
+                 <img src={`${import.meta.env.BASE_URL}images/ai-gateway-illustration.png`} alt="Абстрактный ледяной шлюз соединяет несколько маршрутов к моделям" loading="lazy" className="h-full w-full object-cover object-center"/>
+                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#d6e9ef]/45 lg:bg-gradient-to-r lg:from-[#e6f3f5]/65 lg:via-transparent lg:to-transparent"/>
+               </div>
+             </div>
+           </section>
         </main>
 
          <footer className="flex flex-wrap items-center justify-between gap-5 border-t border-[#dededb] pt-7 text-[11px] text-[#787876]"><span className="font-semibold text-[#373735]">stratus/hub</span><span>© 2024 Northstar Labs</span><div className="flex gap-5"><Link href="/docs" className="hover:text-black" data-testid="link-footer-docs">Документация</Link><a href="#faq" className="hover:text-black">Статус</a><a href="#faq" className="hover:text-black">Контакты</a></div></footer>
       </div>
-      {demoOpen && <div className="fixed inset-0 z-50 grid place-items-center bg-black/30 p-5 backdrop-blur-sm"><div className="w-full max-w-[420px] rounded-[28px] bg-[#f7f7f5] p-7 shadow-2xl"><div className="flex items-center justify-between"><h2 className="display text-2xl font-bold">Добро пожаловать</h2><button aria-label="Закрыть" onClick={() => setDemoOpen(false)}><X size={18}/></button></div><p className="mt-3 text-sm leading-relaxed text-[#6d6d6a]">Ваш workspace почти готов. Оставьте email — пришлём доступ к раннему запуску.</p><input autoFocus className="mt-6 w-full rounded-xl border border-[#d4d4d0] bg-white px-4 py-3 text-sm outline-none focus:border-[#7ea68f]" placeholder="you@company.com"/><button onClick={() => setDemoOpen(false)} className="mt-3 w-full rounded-full bg-[#292929] py-3 text-sm font-semibold text-white">Получить доступ <ArrowRight className="ml-2 inline" size={14}/></button></div></div>}
     </div>
   );
 }

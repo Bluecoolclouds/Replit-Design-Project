@@ -10,9 +10,14 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: workspace
+    description: Authenticated account data
+security:
+  - clerkSession: []
 paths:
   /healthz:
     get:
+      security: []
       operationId: healthCheck
       tags: [health]
       summary: Health check
@@ -24,7 +29,82 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /workspace:
+    get:
+      operationId: getWorkspace
+      tags: [workspace]
+      summary: Current account balance, keys and recent requests
+      responses:
+        "200":
+          description: Current user's workspace
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Workspace"
+        "401":
+          description: Authentication required
+  /prices:
+    get:
+      operationId: listPrices
+      tags: [workspace]
+      summary: Published shared model prices
+      responses:
+        "200":
+          description: Published USD prices per million tokens
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ModelPrice"
+        "401":
+          description: Authentication required
+  /keys:
+    post:
+      operationId: createKey
+      tags: [workspace]
+      summary: Create an account key; secret returned only once
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/KeyInput"
+      responses:
+        "201":
+          description: Created key and one-time secret
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreatedKey"
+        "400":
+          description: Invalid key name
+        "401":
+          description: Authentication required
+  /keys/{id}:
+    delete:
+      operationId: revokeKey
+      tags: [workspace]
+      summary: Revoke a key owned by the current account
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Revoked
+        "401":
+          description: Authentication required
+        "404":
+          description: Key not found in current account
 components:
+  securitySchemes:
+    clerkSession:
+      type: apiKey
+      in: cookie
+      name: __session
   schemas:
     HealthStatus:
       type: object
@@ -33,4 +113,70 @@ components:
           type: string
       required:
         - status
+    Account:
+      type: object
+      required: [id, balanceCents, currency]
+      properties:
+        id: { type: string }
+        balanceCents: { type: integer }
+        currency: { type: string, enum: [USD] }
+    ApiKey:
+      type: object
+      required: [id, name, prefix, createdAt]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        prefix: { type: string }
+        createdAt: { type: string, format: date-time }
+    KeyInput:
+      type: object
+      required: [name]
+      properties:
+        name: { type: string, minLength: 1, maxLength: 80 }
+    CreatedKey:
+      type: object
+      required: [key, secret]
+      properties:
+        key:
+          $ref: "#/components/schemas/ApiKey"
+        secret: { type: string }
+    ModelPrice:
+      type: object
+      required: [id, provider, model, inputUsdPerMillion, outputUsdPerMillion]
+      properties:
+        id: { type: string }
+        provider: { type: string }
+        model: { type: string }
+        inputUsdPerMillion: { type: string }
+        outputUsdPerMillion: { type: string }
+    RequestRecord:
+      type: object
+      required: [id, createdAt, keyName, model, transport, status, inputTokens, outputTokens, chargedCents]
+      properties:
+        id: { type: string }
+        createdAt: { type: string, format: date-time }
+        keyName: { type: string }
+        model: { type: string }
+        transport: { type: string }
+        status: { type: string }
+        inputTokens: { type: integer }
+        outputTokens: { type: integer }
+        chargedCents: { type: integer }
+        error: { type: ["string", "null"] }
+    Workspace:
+      type: object
+      required: [account, keys, requests, requestCount, spentCents]
+      properties:
+        account:
+          $ref: "#/components/schemas/Account"
+        keys:
+          type: array
+          items:
+            $ref: "#/components/schemas/ApiKey"
+        requests:
+          type: array
+          items:
+            $ref: "#/components/schemas/RequestRecord"
+        requestCount: { type: integer }
+        spentCents: { type: integer }
 

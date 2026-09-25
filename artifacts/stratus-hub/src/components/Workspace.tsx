@@ -1,39 +1,32 @@
 import { useMemo, useState } from "react";
 import { Link } from "wouter";
-import { SpendChart } from "./SpendChart";
+import { useUser, useClerk } from "@clerk/react";
+import { useGetWorkspace } from "@workspace/api-client-react";
 import { ModelPrices } from "./ModelPrices";
-import {
-  ArrowUpRight, Check, CircleHelp, Clock3,
-  Copy, FileKey2, Filter, KeyRound, LayoutDashboard, Menu, Search,
-  Send, Settings2, ShieldCheck, X,
-} from "lucide-react";
+import { CircleHelp, FileKey2, LayoutDashboard, LogOut, Menu, Search, Settings2, X } from "lucide-react";
 
-type Range = "24 часа" | "7 дней" | "30 дней";
-type RequestLog = { timestamp: string; keyName: string; model: string; transport: string; status: "OK" | "Ошибка"; tokens: string; error: string };
+const money = (cents: number, currency = "USD") =>
+  new Intl.NumberFormat("ru-RU", { style: "currency", currency }).format(cents / 100);
 
-const logs: RequestLog[] = [
-  { timestamp: "01:13:14", keyName: "user:nicklodeon555", model: "gpt-5.5", transport: "HTTP", status: "OK", tokens: "90", error: "—" },
-  { timestamp: "01:13:04", keyName: "digi", model: "DeepSeek V4 Pro", transport: "HTTP", status: "OK", tokens: "1", error: "—" },
-  { timestamp: "01:12:59", keyName: "user:nicklodeon555", model: "DeepSeek V4 Pro", transport: "SDK", status: "OK", tokens: "1", error: "—" },
-  { timestamp: "00:58:21", keyName: "staging-key", model: "Claude Sonnet 4.6", transport: "HTTP", status: "Ошибка", tokens: "0", error: "rate_limit" },
-  { timestamp: "23:49:08", keyName: "user:nicklodeon555", model: "Gemini 3.5 Flash", transport: "HTTP", status: "OK", tokens: "420", error: "—" },
-];
+const localizedStatus = (status: string) => {
+  const normalized = status.toLowerCase();
+  if (["ok", "success", "successful", "succeeded"].includes(normalized)) return "Успешно";
+  if (["error", "failed", "failure"].includes(normalized)) return "Ошибка";
+  if (["pending", "queued"].includes(normalized)) return "В обработке";
+  return status;
+};
 
 export function Workspace() {
-  const [range, setRange] = useState<Range>("7 дней");
+  const { data, isLoading, isError, error, refetch } = useGetWorkspace();
+  const { user } = useUser();
+  const { signOut } = useClerk();
   const [query, setQuery] = useState("");
   const [transport, setTransport] = useState("Все");
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [copied, setCopied] = useState(false);
-  const visibleLogs = useMemo(() => logs.filter((log) => {
-    const haystack = `${log.keyName} ${log.model} ${log.status}`.toLowerCase();
-    return haystack.includes(query.toLowerCase()) && (transport === "Все" || log.transport === transport);
-  }), [query, transport]);
-  const copyKey = () => {
-    navigator.clipboard?.writeText("sk_live_stratus_••••••••");
-    setCopied(true);
-    window.setTimeout(() => setCopied(false), 1500);
-  };
+  const visibleRequests = useMemo(() => (data?.requests ?? []).filter((request) => {
+    const haystack = `${request.keyName} ${request.model} ${request.status} ${request.error ?? ""}`.toLowerCase();
+    return haystack.includes(query.toLowerCase()) && (transport === "Все" || request.transport === transport);
+  }), [data?.requests, query, transport]);
 
   return (
     <div className="workspace">
@@ -41,30 +34,23 @@ export function Workspace() {
         .workspace{min-height:100dvh;background:#f2f9fa;color:#153040;font-family:var(--app-font-sans,'Plus Jakarta Sans',ui-sans-serif,system-ui,sans-serif);font-synthesis:none}
         .workspace *{box-sizing:border-box}.workspace button,.workspace input,.workspace select{font:inherit}
         .workspace-shell{max-width:1440px;margin:auto;padding:18px 24px 48px}.workspace-nav{height:58px;border:1px solid #dcecef;background:rgba(255,255,255,.84);border-radius:20px;display:flex;align-items:center;padding:0 14px 0 20px;gap:28px;box-shadow:0 8px 28px rgba(48,120,139,.07);position:sticky;top:14px;z-index:10;backdrop-filter:blur(14px)}
-        .workspace-logo{font-family:var(--app-font-serif,'DM Sans','Plus Jakarta Sans',sans-serif);font-size:18px;font-weight:800;letter-spacing:-.07em;color:#183746;white-space:nowrap}.workspace-logo b{color:#71b9c3}.workspace-navlinks{display:flex;gap:4px;align-items:center}.workspace-navlinks a,.workspace-back{padding:8px 13px;border-radius:11px;color:#66818b;font-size:11px;text-decoration:none}.workspace-navlinks a.active,.workspace-navlinks a:hover,.workspace-back:hover{background:#e6f4f6;color:#315d6d}.workspace-navright{margin-left:auto;display:flex;align-items:center;gap:8px}.workspace-icon{border:0;background:#edf5f6;color:#587883;width:33px;height:33px;border-radius:11px;display:grid;place-items:center;cursor:pointer}.workspace-menu{display:none}
-        .workspace-head{display:flex;align-items:end;justify-content:space-between;margin:44px 2px 24px;gap:20px}.workspace-eyebrow{font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:#6a9ca9;font-weight:700}.workspace h1{font-family:var(--app-font-serif,'DM Sans','Plus Jakarta Sans',sans-serif);letter-spacing:-.06em;font-size:34px;line-height:1;margin:9px 0 0}.workspace-sub{font-size:12px;color:#78919a;margin-top:8px}.workspace-range{display:flex;gap:4px;padding:4px;background:#e6f1f3;border-radius:13px}.workspace-range button{border:0;background:transparent;padding:8px 12px;border-radius:9px;color:#6d8992;font-size:11px;cursor:pointer}.workspace-range button.active{background:#fff;color:#315b69;box-shadow:0 2px 7px #cfe2e5}
-        .workspace-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:14px}.workspace-card{border:1px solid #dcecef;background:rgba(255,255,255,.72);border-radius:20px;padding:20px;box-shadow:0 7px 22px rgba(48,120,139,.045)}.workspace-card h2{font-family:var(--app-font-serif,'DM Sans','Plus Jakarta Sans',sans-serif);font-size:15px;letter-spacing:-.03em;margin:0}.workspace-card-label{color:#76929b;font-size:10px}.workspace-bonus{grid-column:1/-1;padding:19px 22px;display:flex;align-items:center;justify-content:space-between;background:#e2f3f5;border-color:#cae8ec}.workspace-bonus strong{display:block;font-family:var(--app-font-serif,'DM Sans','Plus Jakarta Sans',sans-serif);font-size:28px;letter-spacing:-.06em}.workspace-bonus p{font-size:11px;color:#63828d;margin:4px 0 0}.workspace-button{border:0;border-radius:10px;background:#244b5a;color:#eaf9fa;padding:10px 14px;font-size:11px;font-weight:700;cursor:pointer;transition:transform .2s,background .2s}.workspace-button:hover{transform:translateY(-1px);background:#326b7a}.workspace-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;grid-column:1/-1}.workspace-metric{padding:17px;border:1px solid #dcecef;background:#fff;border-radius:16px}.workspace-metric strong{font-family:var(--app-font-serif,'DM Sans','Plus Jakarta Sans',sans-serif);font-size:23px;display:block;letter-spacing:-.05em;margin:8px 0 4px}.workspace-metric small{font-size:10px;color:#79939b}.workspace-metric .up{color:#549ca4}.workspace-metric .down{color:#b66e72}.workspace-metric svg{vertical-align:middle;margin-right:3px}.workspace-balance{display:flex;justify-content:space-between;align-items:end}.workspace-balance strong{font-family:var(--app-font-serif,'DM Sans','Plus Jakarta Sans',sans-serif);font-size:30px;letter-spacing:-.06em;display:block;margin:8px 0 2px}.workspace-balance small{font-size:10px;color:#7b969e}.workspace-key{margin-top:18px;display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:11px;background:#edf6f7;font:10px monospace;color:#527783}.workspace-key button{margin-left:auto;border:0;background:none;color:#5e929e;cursor:pointer}.workspace-chart{height:205px;margin-top:18px;position:relative}.workspace-chart svg{width:100%;height:100%;overflow:visible}.workspace-chart-grid{stroke:#dcebee;stroke-dasharray:2 5}.workspace-chart-line{fill:none;stroke:#56aeb9;stroke-width:2.5}.workspace-chart-area{fill:url(#area);opacity:.45}.workspace-axis{display:flex;justify-content:space-between;color:#93a9af;font-size:9px;margin-top:-4px}.workspace-multipliers{min-height:274px}.workspace-multiplier{display:grid;grid-template-columns:105px 1fr;gap:12px;padding:13px 0;border-bottom:1px solid #e5f0f1}.workspace-multiplier:last-child{border-bottom:0}.workspace-provider{display:flex;align-items:center;gap:7px;font-size:11px;font-weight:700}.workspace-mark{display:grid;place-items:center;width:24px;height:24px;background:#e3f2f4;color:#4f8f9c;border-radius:8px;font-size:9px}.workspace-model{display:flex;justify-content:space-between;font-size:10px;color:#496d77;padding:2px 0}.workspace-model b{font-family:var(--app-font-mono,'SFMono-Regular',Consolas,monospace);color:#7b9ca4}.workspace-log{grid-column:1/-1;overflow:hidden}.workspace-log-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:15px}.workspace-controls{display:flex;gap:7px;align-items:center}.workspace-search{border:1px solid #d8e9eb;background:#fafdfe;border-radius:9px;padding:8px 10px 8px 30px;font-size:10px;width:190px;outline:none;color:#315460}.workspace-search:focus{border-color:#83c5cc}.workspace-search-wrap{position:relative}.workspace-search-wrap svg{position:absolute;left:10px;top:8px;color:#8ca9b1}.workspace-select{border:1px solid #d8e9eb;background:#fafdfe;border-radius:9px;padding:8px 25px 8px 10px;color:#64818a;font-size:10px}.workspace-table-wrap{overflow:auto}.workspace table{width:100%;border-collapse:collapse;min-width:650px}.workspace th{text-align:left;color:#8aa4aa;text-transform:uppercase;letter-spacing:.1em;font-size:8px;font-weight:700;padding:10px 8px;border-bottom:1px solid #dcecef}.workspace td{padding:12px 8px;color:#526f78;font-size:10px;border-bottom:1px solid #e7f0f1}.workspace td:first-child{font-family:var(--app-font-mono,'SFMono-Regular',Consolas,monospace);color:#678a94}.workspace-status{display:inline-flex;padding:4px 7px;border-radius:7px;background:#ddf2e9;color:#4f9580;font-size:9px}.workspace-status.error{background:#fae7e7;color:#af6d72}.workspace-empty{padding:40px;text-align:center;color:#7d999f;font-size:12px}.workspace-support{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.workspace-support a{display:flex;align-items:center;gap:7px;color:#5d8490;background:#edf6f7;border-radius:9px;padding:9px 11px;text-decoration:none;font-size:10px}.workspace-support a:hover{background:#e0f1f3}
-        @media(max-width:800px){.workspace-shell{padding:12px 13px 35px}.workspace-nav{top:8px}.workspace-navlinks{display:none}.workspace-menu{display:grid}.workspace-head{margin-top:32px;align-items:start;flex-direction:column}.workspace-grid{grid-template-columns:1fr}.workspace-bonus,.workspace-metrics,.workspace-log{grid-column:auto}.workspace-metrics{grid-template-columns:1fr}.workspace-bonus{align-items:start;gap:15px;flex-direction:column}.workspace-log-head{align-items:start;flex-direction:column}.workspace-controls{width:100%}.workspace-search{width:100%}.workspace-search-wrap{flex:1}.workspace-chart{height:180px}}
-        /* Cabinet-only readability and responsive layout. */
+        .workspace-logo{font-family:var(--app-font-serif,'DM Sans','Plus Jakarta Sans',sans-serif);font-size:18px;font-weight:800;letter-spacing:-.07em;color:#183746;white-space:nowrap;text-decoration:none}.workspace-logo span{color:#71b9c3}.workspace-navlinks{display:flex;gap:4px;align-items:center}.workspace-navlinks a{padding:8px 13px;border-radius:11px;color:#66818b;font-size:11px;text-decoration:none;display:flex;align-items:center;gap:5px}.workspace-navlinks a.active,.workspace-navlinks a:hover{background:#e6f4f6;color:#315d6d}.workspace-navright{margin-left:auto;display:flex;align-items:center;gap:8px}.workspace-icon{border:0;background:#edf5f6;color:#587883;width:33px;height:33px;border-radius:11px;display:grid;place-items:center;cursor:pointer}.workspace-menu{display:none}
+        .workspace-head{display:flex;align-items:end;justify-content:space-between;margin:44px 2px 24px;gap:20px}.workspace-eyebrow{font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:#6a9ca9;font-weight:700}.workspace h1{font-family:var(--app-font-serif,'DM Sans','Plus Jakarta Sans',sans-serif);letter-spacing:-.06em;font-size:34px;line-height:1;margin:9px 0 0}.workspace-sub{font-size:12px;color:#78919a;margin-top:8px}
+        .workspace-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.workspace-card{min-width:0;border:1px solid #dcecef;background:rgba(255,255,255,.72);border-radius:20px;padding:20px;box-shadow:0 7px 22px rgba(48,120,139,.045)}.workspace-card h2{font-family:var(--app-font-serif,'DM Sans','Plus Jakarta Sans',sans-serif);font-size:15px;letter-spacing:-.03em;margin:0}.workspace-card-label{color:#76929b;font-size:10px}.workspace-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;grid-column:1/-1}.workspace-metric{padding:17px;border:1px solid #dcecef;background:#fff;border-radius:16px}.workspace-metric strong{font-family:var(--app-font-serif,'DM Sans','Plus Jakarta Sans',sans-serif);font-size:23px;display:block;letter-spacing:-.05em;margin:8px 0 4px;overflow-wrap:anywhere}.workspace-metric small{font-size:10px;color:#79939b}.workspace-card-label.upper{font-weight:700;text-transform:uppercase;letter-spacing:.08em}.workspace-log{grid-column:1/-1;overflow:hidden}.workspace-log-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:15px}.workspace-controls{display:flex;gap:7px;align-items:center}.workspace-search{border:1px solid #d8e9eb;background:#fafdfe;border-radius:9px;padding:8px 10px 8px 30px;font-size:10px;width:190px;outline:none;color:#315460}.workspace-search:focus{border-color:#83c5cc}.workspace-search-wrap{position:relative}.workspace-search-wrap svg{position:absolute;left:10px;top:8px;color:#8ca9b1}.workspace-select{border:1px solid #d8e9eb;background:#fafdfe;border-radius:9px;padding:8px 25px 8px 10px;color:#64818a;font-size:10px}.workspace-table-wrap{overflow:auto}.workspace table{width:100%;border-collapse:collapse;min-width:650px}.workspace th{text-align:left;color:#8aa4aa;text-transform:uppercase;letter-spacing:.1em;font-size:8px;font-weight:700;padding:10px 8px;border-bottom:1px solid #dcecef}.workspace td{padding:12px 8px;color:#526f78;font-size:10px;border-bottom:1px solid #e7f0f1}.workspace td:first-child{font-family:var(--app-font-mono,'SFMono-Regular',Consolas,monospace);color:#678a94}.workspace-status{display:inline-flex;padding:4px 7px;border-radius:7px;background:#ddf2e9;color:#4f9580;font-size:9px}.workspace-status.error{background:#fae7e7;color:#af6d72}.workspace-empty{padding:30px;text-align:center;color:#7d999f;font-size:12px}.workspace-state{grid-column:1/-1;padding:24px;border-radius:16px;background:#fff;border:1px solid #dcecef;color:#67838c;font-size:12px}.workspace-support{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.workspace-support a,.workspace-action{display:flex;align-items:center;gap:7px;color:#5d8490;background:#edf6f7;border:0;border-radius:9px;padding:9px 11px;text-decoration:none;font-size:10px;cursor:pointer}.workspace-support a:hover,.workspace-action:hover{background:#e0f1f3}
+        @media(max-width:800px){.workspace-shell{padding:12px 13px 35px}.workspace-nav{top:8px}.workspace-navlinks{display:none}.workspace-menu{display:grid}.workspace-head{margin-top:32px;align-items:start;flex-direction:column}.workspace-grid{grid-template-columns:1fr}.workspace-metrics,.workspace-log{grid-column:auto}.workspace-metrics{grid-template-columns:1fr}.workspace-log-head{align-items:start;flex-direction:column}.workspace-controls{width:100%}.workspace-search{width:100%}.workspace-search-wrap{flex:1}}
+        /* Keep the cabinet readable as live values and model prices vary. */
         .workspace-shell,.workspace-grid,.workspace-card,.workspace-log { min-width:0 }
-        .workspace-grid { grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr) }
+        .workspace-grid { grid-template-columns:repeat(2,minmax(0,1fr)) }
         .workspace-nav { gap:clamp(10px,1.8vw,28px) }
-        .workspace-navlinks a,.workspace-back { display:inline-flex; align-items:center; gap:6px; white-space:nowrap; font-size:12px; line-height:1.4 }
+        .workspace-navlinks a { display:inline-flex; align-items:center; gap:6px; white-space:nowrap; font-size:12px; line-height:1.4 }
         .workspace-navlinks a svg { flex:none }
         .workspace-navright { min-width:0; flex-shrink:1 }
         .workspace-navright > .workspace-card-label { min-width:0; max-width:120px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap }
         .workspace-eyebrow { font-size:11px }
         .workspace-sub { font-size:13px; line-height:1.5 }
-        .workspace-range button { font-size:12px }
         .workspace-card h2 { font-size:17px; line-height:1.3 }
         .workspace-card-label { font-size:12px; line-height:1.4 }
-        .workspace-bonus p { font-size:12px; line-height:1.5 }
-        .workspace-button { display:inline-flex; align-items:center; justify-content:center; gap:6px; flex:none; white-space:nowrap; font-size:12px; line-height:1.3 }
-        .workspace-button svg { flex:none }
         .workspace-metric small { font-size:11px; line-height:1.5 }
-        .workspace-key { font-size:11px; min-width:0 }
-        .workspace-key span { min-width:0; overflow-wrap:anywhere }
-        .workspace-key button { flex:none }
         .workspace-controls,.workspace-search-wrap { min-width:0 }
         .workspace-search { font-size:12px; min-width:0 }
         .workspace-search-wrap svg { top:50%; transform:translateY(-50%) }
@@ -82,39 +68,46 @@ export function Workspace() {
         }
         @media(max-width:800px) {
           .workspace-grid { grid-template-columns:minmax(0,1fr) }
-          .workspace-log,.workspace-bonus,.workspace-metrics { min-width:0 }
+          .workspace-log,.workspace-metrics { min-width:0 }
         }
         @media(max-width:500px) {
           .workspace-nav { gap:10px }
           .workspace-navright > .workspace-card-label { max-width:21vw }
           .workspace-card { padding:17px }
-          .workspace-bonus { padding:19px 22px }
           .workspace-controls { width:100% }
           .workspace-search-wrap { flex:1 }
           .workspace-search { width:100% }
         }
         @media(max-width:370px) {
-          .workspace-log-head .workspace-controls { display:grid; grid-template-columns:minmax(0,1fr) 33px }
+          .workspace-log-head .workspace-controls { display:grid; grid-template-columns:minmax(0,1fr) 90px }
           .workspace-controls .workspace-search-wrap { grid-column:1/-1 }
           .workspace-controls .workspace-select { min-width:0; width:100% }
         }
       `}</style>
       <div className="workspace-shell">
-        <nav className="workspace-nav" aria-label="Навигация workspace">
-          <Link href="/" className="workspace-logo" data-testid="link-workspace-logo">stratus<span>/</span>hub</Link>
-          <div className="workspace-navlinks"><Link href="/dashboard" className="active" data-testid="link-dashboard-nav"><LayoutDashboard size={13}/> Кабинет</Link><a href="#logs" data-testid="link-logs-nav">Запросы</a><a href="#keys" data-testid="link-keys-nav">API-ключи</a><Link href="/docs" data-testid="link-docs-nav">Документация</Link><a href="#support" data-testid="link-support-nav">Поддержка</a></div>
-          <div className="workspace-navright"><span className="workspace-card-label">nicklodeon555</span><Link href="/settings" className="workspace-icon" aria-label="Настройки" data-testid="link-settings"><Settings2 size={15}/></Link><button className="workspace-icon workspace-menu" aria-label="Открыть меню" data-testid="button-mobile-menu" onClick={() => setMobileOpen(!mobileOpen)}>{mobileOpen ? <X size={15}/> : <Menu size={15}/>}</button></div>
+        <nav className="workspace-nav" aria-label="Навигация рабочего пространства">
+          <Link href="/" className="workspace-logo">stratus<span>/</span>hub</Link>
+          <div className="workspace-navlinks"><Link href="/dashboard" className="active"><LayoutDashboard size={13}/> Кабинет</Link><a href="#logs">Запросы</a><Link href="/settings">API-ключи</Link><Link href="/docs">Документация</Link></div>
+          <div className="workspace-navright"><span className="workspace-card-label">{user?.fullName ?? user?.primaryEmailAddress?.emailAddress}</span><Link href="/settings" className="workspace-icon" aria-label="Настройки"><Settings2 size={15}/></Link><button className="workspace-icon" aria-label="Выйти из аккаунта" onClick={() => signOut({ redirectUrl: import.meta.env.BASE_URL })}><LogOut size={15}/></button><button className="workspace-icon workspace-menu" aria-label="Открыть меню" onClick={() => setMobileOpen(!mobileOpen)}>{mobileOpen ? <X size={15}/> : <Menu size={15}/>}</button></div>
         </nav>
-        {mobileOpen && <div className="workspace-card" style={{ marginTop: 8, display: "flex", gap: 8, flexWrap: "wrap" }}><Link href="/" className="workspace-back" data-testid="link-mobile-home">Вернуться на сайт</Link><Link href="/settings" className="workspace-back" data-testid="link-mobile-settings">Настройки</Link><Link href="/docs" className="workspace-back" data-testid="link-mobile-docs">Документация</Link><a href="#logs" className="workspace-back" data-testid="link-mobile-logs">Журнал запросов</a><a href="#keys" className="workspace-back" data-testid="link-mobile-keys">API-ключи</a></div>}
-        <header className="workspace-head"><div><div className="workspace-eyebrow">Личный workspace</div><h1 data-testid="text-user-name">Привет, Никита.</h1><p className="workspace-sub">Все маршруты, ключи и расходы — под одним контролем.</p></div><div className="workspace-range" role="group" aria-label="Период графика">{(["24 часа", "7 дней", "30 дней"] as Range[]).map((item) => <button key={item} className={range === item ? "active" : ""} onClick={() => setRange(item)} data-testid={`button-range-${item}`}>{item}</button>)}</div></header>
+        {mobileOpen && <div className="workspace-card" style={{marginTop:8,display:"flex",gap:8,flexWrap:"wrap"}}><Link href="/settings">Настройки</Link><Link href="/docs">Документация</Link><a href="#logs">История запросов</a></div>}
+        <header className="workspace-head"><div><div className="workspace-eyebrow">Рабочее пространство аккаунта</div><h1>Кабинет</h1><p className="workspace-sub">Текущий баланс, опубликованные цены и последние API-запросы.</p></div></header>
         <main className="workspace-grid">
-          <section className="workspace-card workspace-bonus" data-testid="card-bonus"><div><div className="workspace-eyebrow">Бонусная программа</div><strong>+30% <span style={{fontSize:14,letterSpacing:0,fontFamily:"inherit"}}>токенов в подарок</span></strong><p>При пополнении от 500 ₽ · действует до 23 сентября</p></div><button className="workspace-button" data-testid="button-claim-bonus">Получить бонус <ArrowUpRight size={13} style={{verticalAlign:"middle"}}/></button></section>
-          <section className="workspace-metrics"><div className="workspace-metric" data-testid="metric-balance"><div className="workspace-card-label">Баланс токенов</div><strong>23,85 млн</strong><small className="up"><ArrowUpRight size={12}/> 8,4% к прошлой неделе</small></div><div className="workspace-metric" data-testid="metric-requests"><div className="workspace-card-label">Запросы за {range.toLowerCase()}</div><strong>20,99 тыс.</strong><small className="up"><ArrowUpRight size={12}/> 12,7% активности</small></div><div className="workspace-metric" data-testid="metric-spend"><div className="workspace-card-label">Списано токенов</div><strong>759,27 млн</strong><small>демонстрационная метрика</small></div></section>
-          <SpendChart key={range} range={range} />
-          <ModelPrices />
-          <section className="workspace-card" id="keys" data-testid="card-api-key"><div className="workspace-card-label">Доступ к API</div><h2 style={{marginTop:6}}>Один ключ для всех моделей</h2><div className="workspace-key"><KeyRound size={13}/><span>sk_live_stratus_••••••••</span><button onClick={copyKey} data-testid="button-copy-api-key">{copied ? <Check size={14}/> : <Copy size={14}/>}</button></div><div className="workspace-support"><Link href="/docs" data-testid="link-documentation"><FileKey2 size={13}/> Документация</Link><a href="#support" data-testid="link-support"><CircleHelp size={13}/> Поддержка</a></div></section>
-          <section className="workspace-card" id="support" data-testid="card-health"><div className="workspace-card-label">Состояние сервиса</div><h2 style={{marginTop:6}}>Всё работает штатно</h2><div style={{display:"flex",alignItems:"center",gap:7,marginTop:18,fontSize:13,color:"#4d9182"}}><ShieldCheck size={16}/> 99,98% uptime за 30 дней</div><div className="workspace-support"><a href="#status" data-testid="link-status"><Clock3 size={13}/> Статус системы</a><a href="#telegram" data-testid="link-telegram"><Send size={13}/> Telegram-канал</a></div></section>
-          <section className="workspace-card workspace-log" id="logs" data-testid="card-request-logs"><div className="workspace-log-head"><div><div className="workspace-card-label">История активности</div><h2 style={{marginTop:6}}>Полные логи запросов</h2></div><div className="workspace-controls"><div className="workspace-search-wrap"><Search size={13}/><input className="workspace-search" aria-label="Поиск по логам" placeholder="Модель или ключ" value={query} onChange={(e) => setQuery(e.target.value)} data-testid="input-log-search"/></div><select className="workspace-select" aria-label="Фильтр транспорта" value={transport} onChange={(e) => setTransport(e.target.value)} data-testid="select-log-transport"><option>Все</option><option>HTTP</option><option>SDK</option></select><button className="workspace-icon" aria-label="Фильтры" data-testid="button-log-filter"><Filter size={14}/></button></div></div>{visibleLogs.length ? <div className="workspace-table-wrap"><table><thead><tr><th>Время</th><th>Название ключа</th><th>Модель</th><th>Транспорт</th><th>Статус</th><th>Списано</th><th>Ошибка</th></tr></thead><tbody>{visibleLogs.map((log, index)=><tr key={`${log.timestamp}-${index}`} data-testid={`row-request-${index}`}><td>{log.timestamp}<br/><span style={{fontSize:11,color:"#78949d"}}>23.09.2026</span></td><td>{log.keyName}</td><td>{log.model}</td><td>{log.transport}</td><td><span className={`workspace-status ${log.status === "Ошибка" ? "error" : ""}`}>{log.status}</span></td><td>{log.tokens}</td><td>{log.error}</td></tr>)}</tbody></table></div> : <div className="workspace-empty" data-testid="empty-log-results">По этому фильтру запросов нет. Попробуйте другой ключ или модель.</div>}</section>
+          {isLoading && <div className="workspace-state" role="status">Загружаем данные кабинета…</div>}
+          {isError && <div className="workspace-state" role="alert">Не удалось загрузить данные кабинета: {error instanceof Error ? error.message : "Попробуйте ещё раз."} <button className="workspace-action" onClick={() => void refetch()}>Повторить</button></div>}
+          {data && <>
+            <section className="workspace-metrics">
+              <div className="workspace-metric" data-testid="metric-balance"><div className="workspace-card-label upper">Баланс аккаунта</div><strong>{money(data.account.balanceCents, data.account.currency)}</strong><small>Доступный баланс</small></div>
+              <div className="workspace-metric" data-testid="metric-requests"><div className="workspace-card-label upper">Всего запросов</div><strong>{data.requestCount.toLocaleString("ru-RU")}</strong><small>Запросы, записанные для аккаунта</small></div>
+              <div className="workspace-metric" data-testid="metric-spend"><div className="workspace-card-label upper">Потрачено</div><strong>{money(data.spentCents, data.account.currency)}</strong><small>Списания за API-запросы</small></div>
+            </section>
+            <ModelPrices />
+            <section className="workspace-card" id="keys"><div className="workspace-card-label upper">Доступ к API</div><h2 style={{marginTop:6}}>Управление ключами</h2><p className="workspace-sub">Создавайте и отзывайте сохранённые ключи в настройках. Ключи пока не подключены к инференсу.</p><div className="workspace-support"><Link href="/settings"><FileKey2 size={13}/> Управление API-ключами</Link><Link href="/docs"><CircleHelp size={13}/> Документация</Link></div></section>
+            <section className="workspace-card workspace-log" id="logs" data-testid="card-request-logs">
+              <div className="workspace-log-head"><div><div className="workspace-card-label upper">История запросов</div><h2 style={{marginTop:6}}>Последние API-запросы</h2></div><div className="workspace-controls"><div className="workspace-search-wrap"><Search size={13}/><input className="workspace-search" aria-label="Поиск запросов" placeholder="Модель, ключ или статус" value={query} onChange={(e) => setQuery(e.target.value)}/></div><select className="workspace-select" aria-label="Фильтр по транспорту" value={transport} onChange={(e) => setTransport(e.target.value)}><option>Все</option>{Array.from(new Set(data.requests.map((request) => request.transport))).map((kind) => <option key={kind}>{kind}</option>)}</select></div></div>
+              {data.requests.length === 0 ? <div className="workspace-empty">API-запросов пока нет.</div> : visibleRequests.length ? <div className="workspace-table-wrap"><table><thead><tr><th>Создан</th><th>Ключ</th><th>Модель</th><th>Транспорт</th><th>Статус</th><th>Токены</th><th>Списано</th><th>Ошибка</th></tr></thead><tbody>{visibleRequests.map((request) => <tr key={request.id}><td>{new Date(request.createdAt).toLocaleString("ru-RU")}</td><td>{request.keyName}</td><td>{request.model}</td><td>{request.transport}</td><td><span className={`workspace-status ${/error|fail/i.test(request.status) ? "error" : ""}`}>{localizedStatus(request.status)}</span></td><td>{(request.inputTokens + request.outputTokens).toLocaleString("ru-RU")}</td><td>{money(request.chargedCents, data.account.currency)}</td><td>{request.error || "—"}</td></tr>)}</tbody></table></div> : <div className="workspace-empty">По заданным фильтрам запросов нет.</div>}
+            </section>
+          </>}
         </main>
       </div>
     </div>

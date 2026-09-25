@@ -17,7 +17,7 @@ export const sdkArticles: Record<string, DocArticle> = {
         "Логируйте статус и корреляционный идентификатор без тела запроса и без Authorization; ключ храните в секрет-хранилище."
       ] },
       { id: "blocker", title: "Неподтверждённый этап", paragraphs: [
-        "В Stratus Hub сейчас реализован только /api/healthz. Рабочий URL, модель, формат ответа и настоящий API-ключ для OpenAI Go не подтверждены, поэтому интеграцию нельзя считать проверенной."
+        "Stratus Hub пока не предоставляет inference endpoint, модель или формат генерации для OpenAI Go. Ключи кабинета создаются сервером, но не принимаются для модельных запросов."
       ] }
     ]
   },
@@ -33,7 +33,7 @@ export const sdkArticles: Record<string, DocArticle> = {
         "Санитизируйте логи, а секрет передавайте через переменную окружения или managed secret, не через application.properties в репозитории."
       ] },
       { id: "blocker", title: "Что блокирует запуск", paragraphs: [
-        "Backend Stratus Hub не предоставляет ни chat endpoint, ни каталог моделей: доступен только /api/healthz. До публикации контракта нельзя подтвердить совместимость Java SDK или написать рабочий пример."
+        "Backend Stratus Hub не предоставляет chat endpoint или каталог моделей. До публикации inference-контракта нельзя подтвердить совместимость Java SDK или написать рабочий пример."
       ] }
     ]
   },
@@ -49,7 +49,7 @@ export const sdkArticles: Record<string, DocArticle> = {
         "Для streaming обработайте остановку, частичное событие и закрытие соединения; не считайте незавершённый текст успешным ответом."
       ] },
       { id: "blocker", title: "Проверка невозможна", paragraphs: [
-        "Сервис сейчас имеет только /api/healthz; Anthropic endpoint, base URL, модель и ключ отсутствуют. Поэтому даже корректный локальный код Anthropic Python здесь не подтверждает интеграцию."
+        "Anthropic endpoint, base URL и модель для генерации не опубликованы. Ключи Stratus Hub хранятся сервером, но не авторизуют Anthropic Python inference-запросы."
       ] }
     ]
   },
@@ -65,7 +65,7 @@ export const sdkArticles: Record<string, DocArticle> = {
         "Для 429 и временных сетевых ошибок применяйте ограниченный backoff, но не повторяйте ошибки валидации или аутентификации."
       ] },
       { id: "blocker", title: "Неподтверждённый контракт", paragraphs: [
-        "В Stratus backend нет Messages API: реализован только /api/healthz. UI-ключи являются локальным макетом, поэтому endpoint, модель и авторизацию Anthropic JavaScript проверить нельзя."
+        "В Stratus backend нет Messages API. Серверное управление ключами не означает поддержку Anthropic endpoint или модели, поэтому авторизацию Anthropic JavaScript проверить нельзя."
       ] }
     ]
   },
@@ -81,7 +81,7 @@ export const sdkArticles: Record<string, DocArticle> = {
         "Сохраняйте usage отдельно от текста: он нужен для лимитов, но его наличие и названия полей зависят от провайдера."
       ] },
       { id: "blocker", title: "Статус Stratus", paragraphs: [
-        "В проекте нет AI route и Vercel AI provider: backend реализует только /api/healthz. Экран кабинета и ключи — демонстрационные, поэтому рабочий adapter или модель не подтверждены."
+        "В проекте нет AI route или Vercel AI provider. Кабинет и ключи подключены к backend, но рабочий adapter и модель не подтверждены."
       ] }
     ]
   },
@@ -97,7 +97,7 @@ export const sdkArticles: Record<string, DocArticle> = {
         "Передавайте секреты только на сервере, а трассировку очищайте от персональных данных и содержимого закрытых документов."
       ] },
       { id: "blocker", title: "Явный блокер", paragraphs: [
-        "Stratus не предоставляет модельный или embeddings endpoint — в backend есть только /api/healthz. LangChain-интеграция остаётся проектным шаблоном, а UI dashboard не является сервисом цепочек."
+        "Stratus не предоставляет модельный или embeddings endpoint. LangChain-интеграция остаётся проектным шаблоном; данные dashboard не означают доступность модели или сервиса цепочек."
       ] }
     ]
   },
@@ -113,7 +113,7 @@ export const sdkArticles: Record<string, DocArticle> = {
         "Собирайте latency, статус и usage с редактированием prompt/completion; храните трассировку с ограниченным сроком."
       ] },
       { id: "blocker", title: "До проверки провайдера", paragraphs: [
-        "Ни endpoint, ни модель, ни действующий ключ Stratus не опубликованы, а сервер реализует только /api/healthz. LiteLLM нельзя настроить на этот сервис по данным демонстрационного кабинета."
+        "Endpoint и модель для inference Stratus не опубликованы. Ключи управляются сервером, но не принимаются для модельных запросов; LiteLLM нельзя настроить как рабочую интеграцию."
       ] }
     ]
   },
@@ -129,7 +129,7 @@ export const sdkArticles: Record<string, DocArticle> = {
         "Маскируйте prompts в Actuator и логах; проверяйте размер входа до вызова модели."
       ] },
       { id: "blocker", title: "Проверка заблокирована", paragraphs: [
-        "В API Server нет Spring AI-compatible endpoint — только /api/healthz. Настройки dashboard и API keys иллюстративны, поэтому starter, URL и модель Stratus не подтверждены."
+        "В API Server нет Spring AI-compatible inference endpoint. Dashboard и API keys используют backend-данные, но starter, URL и модель Stratus не подтверждены."
       ] }
     ]
   },
@@ -145,7 +145,7 @@ export const sdkArticles: Record<string, DocArticle> = {
         "Проверяйте Content-Type, схему JSON и наличие обязательного поля до передачи результата дальше."
       ] },
       { id: "blocker", title: "Что нельзя проверить", paragraphs: [
-        "Доступен лишь /api/healthz, а AI endpoint, модель и ключ отсутствуют. Поэтому requests-код нельзя направлять на адрес из макета и выдавать за работающую интеграцию."
+        "AI endpoint и модель не опубликованы. Ключи создаются сервером, но не принимаются inference API, поэтому requests-код нельзя выдавать за работающую интеграцию."
       ] }
     ]
   },
@@ -161,7 +161,7 @@ export const sdkArticles: Record<string, DocArticle> = {
         "Для streaming заранее согласуйте формат событий и корректно закрывайте response при исключении."
       ] },
       { id: "blocker", title: "Сервис ещё не готов", paragraphs: [
-        "Stratus backend знает только маршрут /api/healthz; действующий AI URL, ключ и модель не выданы. HTTPX можно подготовить архитектурно, но не провести содержательную проверку."
+        "Stratus backend пока не предоставляет AI URL или модель для inference. HTTPX можно подготовить архитектурно, но содержательную проверку провести нельзя."
       ] }
     ]
   },
@@ -177,7 +177,7 @@ export const sdkArticles: Record<string, DocArticle> = {
         "Читайте streaming-ответ порциями с контролем размера и удаляйте секреты из диагностических сообщений."
       ] },
       { id: "blocker", title: "Неподтверждённая интеграция", paragraphs: [
-        "Рабочего aiohttp-направления нет: сервер реализует только /api/healthz, без AI маршрута и каталога моделей. UI ключей не даёт действительной авторизации."
+        "Рабочего aiohttp-направления для inference нет: сервер пока не предоставляет AI маршрут или каталог моделей. Ключи UI сохраняются сервером, но inference ими не авторизуется."
       ] }
     ]
   },
@@ -193,7 +193,7 @@ export const sdkArticles: Record<string, DocArticle> = {
         "Проверяйте Content-Type и максимальный размер ответа, особенно если сервис поддержит потоковую выдачу."
       ] },
       { id: "blocker", title: "Ограничение текущего проекта", paragraphs: [
-        "Помимо /api/healthz в Stratus нет подтверждённого AI endpoint. Нельзя использовать адрес из лендинга или UI-ключ как доказательство, что urllib-подключение работает."
+        "В Stratus нет подтверждённого AI endpoint. Нельзя использовать адрес из лендинга или ключ Settings как доказательство, что urllib-подключение работает: ключи пока не принимаются inference API."
       ] }
     ]
   },
@@ -209,7 +209,7 @@ export const sdkArticles: Record<string, DocArticle> = {
         "Отменяйте запрос по дедлайну и применяйте ограниченный retry только к временным сетевым или серверным ошибкам."
       ] },
       { id: "blocker", title: "Проверка заблокирована", paragraphs: [
-        "В Stratus реализован только /api/healthz; AI endpoint, ключ, модель и base URL не подтверждены. Поэтому node-fetch инструкция описывает дизайн слоя, а не рабочий вызов."
+        "AI endpoint, модель и base URL для inference не опубликованы. Поэтому node-fetch инструкция описывает дизайн слоя, а не рабочий вызов; ключи кабинета не принимаются для inference."
       ] }
     ]
   },
@@ -225,7 +225,7 @@ export const sdkArticles: Record<string, DocArticle> = {
         "Для потоков обрабатывайте backpressure и освобождайте body при ошибке, иначе пул соединений деградирует."
       ] },
       { id: "blocker", title: "Нет рабочего upstream", paragraphs: [
-        "API Server предоставляет только /api/healthz, без AI маршрутов. Демонстрационные настройки не содержат валидного ключа или модели, поэтому Undici нельзя проверить против Stratus."
+        "API Server пока не предоставляет AI маршруты. Undici нельзя проверить против Stratus для модельных запросов: модельный контракт отсутствует, а ключи не принимаются inference API."
       ] }
     ]
   },
@@ -241,7 +241,7 @@ export const sdkArticles: Record<string, DocArticle> = {
         "Разведите обычный и streaming-режимы, обеспечьте отмену клиента и ограниченный повтор временных ошибок."
       ] },
       { id: "blocker", title: "Фактический статус", paragraphs: [
-        "Bun fetch некуда подключать: в текущем backend есть только /api/healthz. AI URL, валидный ключ и модель не выданы, а кабинет — UI-макет."
+        "Bun fetch пока некуда подключать для inference: AI URL и модель не опубликованы. Кабинет работает с backend, но его ключи не принимаются модельными endpoint."
       ] }
     ]
   },
@@ -257,7 +257,7 @@ export const sdkArticles: Record<string, DocArticle> = {
         "Ограничьте retryOnConnectionFailure и отдельно обрабатывайте отмену Call, 429 и серверные 5xx."
       ] },
       { id: "blocker", title: "Нет подтверждённого endpoint", paragraphs: [
-        "Backend Stratus содержит только /api/healthz и не содержит AI маршрута. Адрес, модель и ключ из UI не являются рабочими, поэтому OkHttp-интеграция не может быть верифицирована."
+        "Backend Stratus не содержит AI маршрута. Адрес и модель для inference не опубликованы, а ключи из UI не принимаются модельными endpoint, поэтому OkHttp-интеграция не верифицирована."
       ] }
     ]
   },
@@ -273,7 +273,7 @@ export const sdkArticles: Record<string, DocArticle> = {
         "Для SSE/streaming согласуйте формат событий и отменяйте coroutine при закрытии вызывающего запроса."
       ] },
       { id: "blocker", title: "До публикации API", paragraphs: [
-        "Сейчас Stratus предоставляет только /api/healthz; модельный endpoint и поддерживаемый Ktor-контракт отсутствуют. UI dashboard не доказывает наличие работающего сервиса."
+        "Сейчас Stratus не предоставляет модельный endpoint или поддерживаемый Ktor inference-контракт. Данные UI dashboard не доказывают наличие генерации."
       ] }
     ]
   },
@@ -289,7 +289,7 @@ export const sdkArticles: Record<string, DocArticle> = {
         "Показывайте пользователю нейтральную ошибку, а диагностике сохраняйте статус без токена и текста приватного prompt."
       ] },
       { id: "blocker", title: "Сервисная зависимость", paragraphs: [
-        "В Stratus нет backend-прокси или AI endpoint, есть только /api/healthz. API keys в настройках — локальный макет; Flutter-интеграция не подтверждена и не должна считаться готовой."
+        "В Stratus нет backend-прокси для AI или inference endpoint. API keys в настройках сохраняются сервером, но Flutter-интеграция не подтверждена и не должна считаться готовой."
       ] }
     ]
   },
@@ -305,7 +305,7 @@ export const sdkArticles: Record<string, DocArticle> = {
         "Повторяйте только согласованные 429/5xx с backoff и дедлайном; не повторяйте ошибки ключа или схемы."
       ] },
       { id: "blocker", title: "Неподтверждённая сторона сервиса", paragraphs: [
-        "Stratus API пока реализует лишь /api/healthz. Рабочие AI URL, модель и credentials отсутствуют, поэтому Guzzle-слой можно спроектировать, но нельзя проверить."
+        "Stratus API пока не предоставляет AI URL или модель для inference, поэтому Guzzle-слой можно спроектировать, но нельзя проверить."
       ] }
     ]
   },
@@ -321,7 +321,7 @@ export const sdkArticles: Record<string, DocArticle> = {
         "Различайте сетевую ошибку, 401/403, 429 и 5xx; retries должны быть конечными и отменяемыми."
       ] },
       { id: "blocker", title: "Фактическая блокировка", paragraphs: [
-        "AI маршрутов в API Server нет — только /api/healthz. Stratus не подтвердил base URL, модель и ключ, поэтому стандартный Go client нельзя объявить подключённым."
+        "Inference маршрутов в API Server нет. Stratus не опубликовал base URL или модель для генерации, поэтому стандартный Go client нельзя объявить подключённым."
       ] }
     ]
   },
@@ -337,7 +337,7 @@ export const sdkArticles: Record<string, DocArticle> = {
         "Для async-вызовов обрабатывайте exceptionally и отмену, а retries ограничивайте временными ошибками и дедлайном."
       ] },
       { id: "blocker", title: "Проверка после публикации", paragraphs: [
-        "Сейчас единственный реализованный маршрут — /api/healthz; AI endpoint, модель и действительный ключ отсутствуют. Поэтому Java HttpClient подготовлен только концептуально, а UI mockup не заменяет сервис."
+        "Сейчас AI endpoint и модель для генерации отсутствуют. Java HttpClient подготовлен только концептуально; ключи и данные кабинета обслуживаются backend, но inference не поддерживается."
       ] }
     ]
   }
