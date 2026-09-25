@@ -2,13 +2,13 @@
 .model-prices h2 { margin:6px 0 20px; }
 .model-prices-head,.model-prices-row {
   display:grid;
-  grid-template-columns:minmax(0,1fr) 72px 72px;
+  grid-template-columns:minmax(0,1fr) 74px 74px;
   gap:8px;
   align-items:center;
 }
 .model-prices-head {
   padding:0 5px 9px;
-  font-size:10px;
+  font-size:11px;
   font-weight:700;
   color:#829da5;
   text-transform:uppercase;
@@ -18,15 +18,15 @@
 .model-prices-row { padding:12px 5px; border-top:1px solid #e4eff1; }
 .model-prices-identity { display:flex; align-items:center; gap:9px; min-width:0; }
 .model-prices-identity > span:last-child { min-width:0; }
-.model-prices-identity strong { display:block; font-size:11px; line-height:1.35; color:#294e5b; }
-.model-prices-identity small { display:block; margin-top:2px; font-size:10px; color:#829da5; }
-.model-prices-mark { display:grid; place-items:center; flex:none; width:28px; height:28px; border-radius:9px; background:#e4f2f4; color:#4b8a9a; font-size:9px; font-weight:800; }
+.model-prices-identity strong { display:block; font-size:12px; line-height:1.4; color:#294e5b; }
+.model-prices-identity small { display:block; margin-top:2px; font-size:11px; color:#829da5; }
+.model-prices-mark { display:grid; place-items:center; flex:none; width:28px; height:28px; border-radius:9px; background:#e4f2f4; color:#4b8a9a; font-size:10px; font-weight:800; }
 .model-prices-value { text-align:right; white-space:nowrap; color:#305f6e; font-family:var(--app-font-mono,'SFMono-Regular',Consolas,monospace); font-size:12px; font-weight:700; }
-.model-prices-note { margin:14px 0 0; padding:11px 12px; border-radius:10px; background:#edf6f7; color:#698792; font-size:10px; line-height:1.5; }
+.model-prices-note { margin:14px 0 0; padding:11px 12px; border-radius:10px; background:#edf6f7; color:#698792; font-size:11px; line-height:1.5; }
 @media(max-width:420px) {
-  .model-prices-head,.model-prices-row { grid-template-columns:minmax(0,1fr) 55px 55px; gap:5px; }
+  .model-prices-head,.model-prices-row { grid-template-columns:minmax(0,1fr) 59px 59px; gap:5px; }
   .model-prices-identity { gap:6px; }
   .model-prices-mark { width:24px; height:24px; }
-  .model-prices-identity strong { font-size:10px; }
-  .model-prices-value { font-size:11px; }
+  .model-prices-identity strong { font-size:11px; }
+  .model-prices-value { font-size:12px; }
 }
